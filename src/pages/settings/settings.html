@@ -1,0 +1,36 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Einstellungen</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-list-header>Konto</ion-list-header>
+<!--     <button ion-item>
+      <ion-label>Benutzername/E-Mail</ion-label>
+      <ion-note item-end>usrname</ion-note>
+    </button>
+    <button ion-item>
+        <ion-label>Passwort</ion-label>
+        <ion-note item-end>*******</ion-note>
+      </button> -->
+      <ion-item>
+        <ion-label floating>Benutzername</ion-label>
+        <ion-input type="text" #username></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Passwort</ion-label>
+        <ion-input type="password" #password></ion-input>
+      </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <button ion-button full (click)="save()">Speichern</button>
+  </ion-toolbar>
+</ion-footer>

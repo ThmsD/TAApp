@@ -1,0 +1,154 @@
+<ion-header>
+
+  <ion-toolbar>
+    <ion-title>Übersicht</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only (click)="goToSettings()">
+        <ion-icon name="settings"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content padding>
+
+<!--
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-col" col-6>
+        <ion-card *ngIf="test(true)">
+          <ion-card-header>
+            <img src="assets/imgs/EVI.png" class="card-image">
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>EVI</ion-card-title>
+            <ion-list no-lines>
+              <ion-item>&beta; = 3.3</ion-item>
+              <ion-item class="test">asdas</ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col class="ion-col" col-6>
+        <ion-card *ngIf="test(true)">
+          <ion-card-header>
+            <img src="assets/imgs/PV-Solar.png" class="card-image"> </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>Photovoltaik</ion-card-title>
+            <ion-list no-lines>
+              <ion-item>Aktuell: 7 kW</ion-item>
+              <ion-item>Heute: 23 kWh</ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-col" col-6>
+        <ion-card *ngIf="test(true)">
+          <ion-card-header>
+            <img src="assets/imgs/EVI.png" class="card-image">
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>EVI</ion-card-title>
+            <ion-grid>
+              <ion-row>
+                <ion-col text-end>&beta;:</ion-col>
+                <ion-col>3.3</ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col></ion-col>
+                <ion-col></ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col class="ion-col" col-6>
+        <ion-card *ngIf="test(true)">
+          <ion-card-header>
+            <img src="assets/imgs/PV-Solar.png" class="card-image"> </ion-card-header>
+          <ion-card-content>
+            <ion-card-title class="ctitle">Photovoltaik</ion-card-title>
+            <ion-grid>
+              <ion-row row-no-padding>
+                <ion-col col-6 text-end text-nowrap class="ic">Aktuell:</ion-col>
+                <ion-col col-6 text-nowrap class="ic">&nbsp;7 kW</ion-col>
+              </ion-row>
+              <ion-row row-no-padding>
+                <ion-col col-6 text-end text-nowrap class="ic">Heute:</ion-col>
+                <ion-col col-6 text-nowrap class="ic">&nbsp;23 kWh</ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+-->
+
+  <!--  <ion-grid>
+      <ion-row>
+        <ion-col col-12 col-md>
+          1 of 4
+        </ion-col>
+        <ion-col col-12 col-md>
+          2 of 4
+        </ion-col>
+        <ion-col col-12 col-md>
+          3 of 4
+        </ion-col>
+        <ion-col col-12 col-md>
+          4 of 4
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
+
+
+
+    untenstehenden Code verwenden!
+    
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6 col-md-4 col-xl-3 *ngFor="let card of [1,2,3,4,5,6,7,8]">
+            <ion-card *ngIf="test(true)" >
+                <ion-card-header>
+                  <img src="assets/imgs/EVI.png" class="card-image">
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-card-title class="card-title">EVI</ion-card-title>
+                  <p class="card-text">
+                    &beta; = 3.3
+                  </p>
+                </ion-card-content>
+              </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid> -->
+
+  <!-- ####################################### -->
+
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6 col-md-4 col-xl-3 *ngFor="let item of data">
+        <ion-card (click)="showDetails(item)" *ngIf="test(true)">
+          <ion-card-header>
+            <img src="assets/imgs/{{item.name | dataPipe}}.png" class="card-image">
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-title>{{item.name}}</ion-card-title>
+            <ion-grid>
+              <ion-row *ngFor="let values of item.values">
+                <ion-col col-6 text-end text-nowrap class="ic" [innerHTML]="values.description"></ion-col>
+                <ion-col col-6 text-nowrap class="ic">{{values.value}}</ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
