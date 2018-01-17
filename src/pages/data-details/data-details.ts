@@ -7,7 +7,7 @@ import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
   templateUrl: 'data-details.html',
 })
 export class DataDetailsPage {
-  //------------------------------
+  //------------------------------ https://github.com/newsof1111/swipedTabs-ionic3
   @ViewChild('SwipedTabsSlider') SwipedTabsSlider: Slides ;
 
   SwipedTabsIndicator :any= null;
