@@ -12,6 +12,12 @@ page-data-details {
         margin: auto;
     }
 
+    ion-slide.swiper-slide {
+        align-items: flex-start;
+    }
+
+    
+
     .SwipedTabs-indicatorSegment
     {
         -webkit-transition: 0.3s all;
