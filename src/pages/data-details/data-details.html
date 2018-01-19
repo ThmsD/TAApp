@@ -18,42 +18,58 @@
 					<ion-col col-6 text-nowrap class="ic">{{values.value}}</ion-col>
 				</ion-row>
 			</ion-col>
-		</ion-row>
-		<ion-row>
+    </ion-row>
+    <ion-row>
 			<ion-segment class="SwipedTabs-tabs">
 				<ion-segment-button *ngFor='let tab of tabs ; let i = index ' value="IngoreMe" (click)="selectTab(i)" 
 					[ngClass]='{ "SwipedTabs-activeTab" : ( this.SwipedTabsSlider  && ( this.SwipedTabsSlider.getActiveIndex() === i || (  tabs.length -1 === i && this.SwipedTabsSlider.isEnd()))) }'>
 					{{tab}}
 				</ion-segment-button>
 			</ion-segment>
-		</ion-row>
-		<ion-row>
-			<!-- here is our dynamic line  "indicator"-->
+		
+      <!-- here is our dynamic line  "indicator"-->
+    </ion-row>
+        <ion-row>
 			<div id='indicator' class="SwipedTabs-indicatorSegment" [ngStyle]="{'width.%': (100/this.tabs.length)}"></div>
 		</ion-row>
-		<ion-row class="align-center">
-			< 19.01.2018 >
-		</ion-row>
-		<ion-row>
+    <ion-row>
 		
 			<ion-slides #SwipedTabsSlider (ionSlideDrag)="animateIndicator($event)" (ionSlideWillChange)="updateIndicatorPosition()"
 			 (ionSlideDidChange)="updateIndicatorPosition()" (pan)="updateIndicatorPosition()" [pager]="false">
 				<ion-slide>
-					<div style="position: relative; height: 65vh">
-					<canvas #lineCanvas ></canvas>
-				</div>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < 19.01.2018 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasDay></canvas>
+          </div>
 				</ion-slide>
 				<ion-slide>
-					<h1>Page 2 </h1>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < KW 3 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasWeek></canvas>
+          </div>
 				</ion-slide>
 				<ion-slide>
-					<h1>Page 3 </h1>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < Januar >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasMonth></canvas>
+          </div>
 				</ion-slide>
 				<ion-slide>
-					<h1>Page 4 </h1>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < 2018 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasYear></canvas>
+          </div>
 				</ion-slide>
 			</ion-slides>
-		</ion-row>
+    </ion-row>
 	</ion-grid>
 
 	<!--<ion-segment>
