@@ -32,6 +32,9 @@ export class SettingsPage {
     // headers.append('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT');
     // headers.append('Accept','application/json');
     // headers.append('content-type','application/json');
+
+    // start chrome with --disable-web-security to test it in chrome
+    
     headers.append('Authorization', 'Basic cmVuZV9wZWlubDpIU2hvZlJQRTIwMTc=');
     let options = new RequestOptions({headers:headers});
     this.http.post("https://api.ta.co.at/v1/access_token", {}, options) 
