@@ -30,12 +30,7 @@ export class OverviewPage {
   }
 
   public goToSettings() {
-    // this.navCtrl.push(SettingsPage);
-    this.http.post("https://api.ta.co.at/v1/access_token", {"Authorization":"Basic cmVuZV9wZWlubDpIU2hvZlJQRTIwMTc="})
-      .subscribe(res => {
-        console.log("Post: " + res);
-      },
-      err => { console.log("POST-Error: " + err) });
+    this.navCtrl.push(SettingsPage);
   }
 
   public showDetails(item: any) {
