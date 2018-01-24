@@ -3,6 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { SQLite } from '@ionic-native/sqlite';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -13,6 +14,7 @@ import { NativeStorage } from "@ionic-native/native-storage";
 import { HttpModule } from '@angular/http';
 import { DataPipe } from '../pipes/data/data';
 import { DataDetailsPage } from '../pages/data-details/data-details';
+import { DatabaseProvider } from '../providers/database/database';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import { DataDetailsPage } from '../pages/data-details/data-details';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     NativeStorage,
-    SettingsStoreProvider
+    SettingsStoreProvider,
+    DatabaseProvider,
+    SQLite
   ]
 })
 export class AppModule {}

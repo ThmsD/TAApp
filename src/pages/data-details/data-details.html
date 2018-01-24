@@ -1,61 +1,84 @@
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>{{item.name}}</ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>{{item.name}}</ion-title>
+	</ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-  <ion-grid>
-    <ion-row>
-      <ion-col col-6>
-        <img src="assets/imgs/{{item.name | dataPipe}}.png">
-      </ion-col>
-      <ion-col col-6 class="align-center">
-        <ion-row *ngFor="let values of item.values">
-          <ion-col col-6 text-end text-nowrap class="ic" [innerHTML]="values.description"></ion-col>
-          <ion-col col-6 text-nowrap class="ic">{{values.value}}</ion-col>
-        </ion-row>
-      </ion-col>
+	<ion-grid>
+		<ion-row>
+			<ion-col col-6>
+				<img src="assets/imgs/{{item.name | dataPipe}}.png">
+			</ion-col>
+			<ion-col col-6 class="align-center">
+				<ion-row *ngFor="let values of item.values">
+					<ion-col col-6 text-end text-nowrap class="ic" [innerHTML]="values.description"></ion-col>
+					<ion-col col-6 text-nowrap class="ic">{{values.value}}</ion-col>
+				</ion-row>
+			</ion-col>
     </ion-row>
-  </ion-grid>
+    <ion-row>
+			<ion-segment class="SwipedTabs-tabs">
+				<ion-segment-button *ngFor='let tab of tabs ; let i = index ' value="IngoreMe" (click)="selectTab(i)" 
+					[ngClass]='{ "SwipedTabs-activeTab" : ( this.SwipedTabsSlider  && ( this.SwipedTabsSlider.getActiveIndex() === i || (  tabs.length -1 === i && this.SwipedTabsSlider.isEnd()))) }'>
+					{{tab}}
+				</ion-segment-button>
+			</ion-segment>
+		
+      <!-- here is our dynamic line  "indicator"-->
+    </ion-row>
+        <ion-row>
+			<div id='indicator' class="SwipedTabs-indicatorSegment" [ngStyle]="{'width.%': (100/this.tabs.length)}"></div>
+		</ion-row>
+    <ion-row>
+		
+			<ion-slides #SwipedTabsSlider (ionSlideDrag)="animateIndicator($event)" (ionSlideWillChange)="updateIndicatorPosition()"
+			 (ionSlideDidChange)="updateIndicatorPosition()" (pan)="updateIndicatorPosition()" [pager]="false">
+				<ion-slide>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < 19.01.2018 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasDay></canvas>
+          </div>
+				</ion-slide>
+				<ion-slide>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < KW 3 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasWeek></canvas>
+          </div>
+				</ion-slide>
+				<ion-slide>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < Januar >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasMonth></canvas>
+          </div>
+				</ion-slide>
+				<ion-slide>
+          <div style="font-size: 0.8em; margin-top: 0.4em">
+            < 2018 >
+          </div>
+          <div style="height: 58vh;">
+            <canvas #lineCanvasYear></canvas>
+          </div>
+				</ion-slide>
+			</ion-slides>
+    </ion-row>
+	</ion-grid>
 
-  <!--<ion-segment>
+	<!--<ion-segment>
     <ion-segment-button *ngFor="let date of ['Tag','Woche','Monat','Jahr']">{{date}}</ion-segment-button>
   </ion-segment>
   <ion-slides>
     <ion-slide *ngFor="let test of [1,2,3,4,5,6]">{{test}}</ion-slide>
   </ion-slides>-->
-  <ion-segment  class="SwipedTabs-tabs"  >
-		<ion-segment-button *ngFor='let tab of tabs ; let i = index ' value="IngoreMe" (click)="selectTab(i)"
-		[ngClass]='{ "SwipedTabs-activeTab" : ( this.SwipedTabsSlider  && ( this.SwipedTabsSlider.getActiveIndex() === i || (  tabs.length -1 === i&& this.SwipedTabsSlider.isEnd()))) }' >
-			{{tab}}
-		</ion-segment-button>
-	</ion-segment>
 
-	<!-- here is our dynamic line  "indicator"-->
-	<div id='indicator' class="SwipedTabs-indicatorSegment" [ngStyle]="{'width.%': (100/this.tabs.length)}"></div>
 
-	<ion-slides #SwipedTabsSlider  (ionSlideDrag)="animateIndicator($event)"
-							(ionSlideWillChange)="updateIndicatorPosition()"
-							(ionSlideDidChange)="updateIndicatorPosition()"
-							(pan)="updateIndicatorPosition()"
-							[pager]="false"
-				>
-		<ion-slide>
-			<h1>Page 1 </h1>
-		</ion-slide>
-		<ion-slide>
-			<h1>Page 2 </h1>
-		</ion-slide>
-		<ion-slide>
-			<h1>Page 3 </h1>
-		</ion-slide>
-		<ion-slide>
-			<h1>Page 4 </h1>
-		</ion-slide>
-	</ion-slides>
 
-  
 </ion-content>

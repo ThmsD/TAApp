@@ -19,14 +19,14 @@ export class OverviewPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad OverviewPage');
     this.http.get("assets/testdata_full.json")
-    .subscribe(
-      res => { 
+      .subscribe(
+      res => {
         this.data = res.json().data;
         console.log("Success: " + JSON.stringify(this.data));
       },
       err => { console.log("Error: " + err) },
       () => { console.log("Loading data completed") }
-    );
+      );
   }
 
   public goToSettings() {
@@ -34,7 +34,7 @@ export class OverviewPage {
   }
 
   public showDetails(item: any) {
-    this.navCtrl.push(DataDetailsPage, {"item": item});
+    this.navCtrl.push(DataDetailsPage, { "item": item });
   }
 
   test(b: boolean): boolean {
