@@ -34,8 +34,9 @@ export class SettingsPage {
     // headers.append('content-type','application/json');
 
     // start chrome with --disable-web-security to test it in chrome
-    
-    headers.append('Authorization', 'Basic cmVuZV9wZWlubDpIU2hvZlJQRTIwMTc=');
+    let base64String = btoa(this.username.value + ":" + this.password.value);
+    console.log(base64String + " = " + atob(base64String));
+    headers.append('Authorization', 'Basic ' + base64String);
     let options = new RequestOptions({headers:headers});
     this.http.post("https://api.ta.co.at/v1/access_token", {}, options) 
       .subscribe(res => {
