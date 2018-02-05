@@ -15,6 +15,7 @@ import { HttpModule } from '@angular/http';
 import { DataPipe } from '../pipes/data/data';
 import { DataDetailsPage } from '../pages/data-details/data-details';
 import { DatabaseProvider } from '../providers/database/database';
+import { EnergyMonitorPage } from '../pages/energy-monitor/energy-monitor';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { DatabaseProvider } from '../providers/database/database';
     OverviewPage,
     SettingsPage,
     DataDetailsPage,
-    DataPipe
+    DataPipe,
+    EnergyMonitorPage
   ],
   imports: [
     BrowserModule,
@@ -36,7 +38,8 @@ import { DatabaseProvider } from '../providers/database/database';
     HomePage,
     OverviewPage,
     SettingsPage,
-    DataDetailsPage
+    DataDetailsPage,
+    EnergyMonitorPage
   ],
   providers: [
     StatusBar,

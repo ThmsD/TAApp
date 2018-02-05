@@ -38,7 +38,7 @@ export class DataDetailsPage {
     this.lineChartDay = new Chart(this.lineCanvasDay.nativeElement, {
       type: 'line',
       data: {
-        labels: ["01:00", "02:00", "03:00", "04:00", "05:00", "06:00", 
+        labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", 
                 "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", 
                 "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", 
                 "19:00", "20:00", "21:00", "22:00", "23:00", "00:00"],
@@ -62,7 +62,7 @@ export class DataDetailsPage {
             pointHoverBorderWidth: 2,
             pointRadius: 1,
             pointHitRadius: 10,
-            data: [0, 0, 0, 0, 0, 0, 1.2, 1.8, 2.3, 3.5, 5.1, 6.7, 6.5, 5.3, 5, 4.8],
+            data: [0, 0, 0, 0, 0, 0, 0, 1.2, 1.8, 2.3, 3.5, 5.1, 6.7, 6.5, 5.3, 5, 4.8],
             spanGaps: false,
           }
         ]
@@ -220,7 +220,7 @@ export class DataDetailsPage {
     console.log("navParams: " + this.navParams.get("item"));
     this.item = JSON.parse(JSON.stringify(this.navParams.get("item")));
     //this.item = JSON.parse(temp);
-    console.log("item: " + (this.item.name));
+    console.log("item: " + (JSON.stringify(this.item.name)));
   }
 
 

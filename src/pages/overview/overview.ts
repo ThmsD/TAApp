@@ -4,7 +4,7 @@ import { SettingsPage } from '../settings/settings';
 import { Http } from "@angular/http";
 import { DataDetailsPage } from "../data-details/data-details";
 import { DatabaseProvider } from '../../providers/database/database';
-import { DatabaseProvider } from "../../providers/database";
+import { EnergyMonitorPage } from '../energy-monitor/energy-monitor';
 
 @IonicPage()
 @Component({
@@ -20,7 +20,6 @@ export class OverviewPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad OverviewPage');
-    this.database.createDatabase();
     this.http.get("assets/testdata_full.json")
       .subscribe(
       res => {
@@ -33,11 +32,15 @@ export class OverviewPage {
   }
 
   public goToSettings() {
-    // this.navCtrl.push(SettingsPage);
+    this.navCtrl.push(SettingsPage);
   }
 
   public showDetails(item: any) {
-    this.navCtrl.push(DataDetailsPage, { "item": item });
+    if(JSON.parse(JSON.stringify(item)).name == "Energiemonitor") {
+      this.navCtrl.push(EnergyMonitorPage, { "item": item , "data": this.data});
+    } else {
+      this.navCtrl.push(DataDetailsPage, { "item": item });
+    }
   }
 
   test(b: boolean): boolean {

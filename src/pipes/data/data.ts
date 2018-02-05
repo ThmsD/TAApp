@@ -25,6 +25,16 @@ export class DataPipe implements PipeTransform {
         return "Battery";
       case "Energiemonitor":
         return "Strommast";
+      case "Strom":
+        return "Strommast";
+      case "Bezug":
+        return "Strommast";
+      case "Einspeisung":
+        return "Strommast";
+      case "Verbrauch (gesamt)":
+        return "Stromzaehler";
+      case "Verbrauch (sonstige)":
+        return "Stromzaehler";
       default:
         break;
     }

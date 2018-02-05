@@ -20,17 +20,23 @@
       </button> -->
       <ion-item>
         <ion-label floating>Benutzername</ion-label>
-        <ion-input type="text" #username></ion-input>
+        <ion-input type="text" [(ngModel)]="userMod.name" [(value)]="nm"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label floating>Passwort</ion-label>
-        <ion-input type="password" #password></ion-input>
+        <ion-input type="password" [(ngModel)]="userMod.password" [value]="pwd"></ion-input>
       </ion-item>
   </ion-list>
+  <ion-list>
+    <ion-item>
+      <p>{{nm}} - {{pwd}}</p>
+    </ion-item>
+  </ion-list>
+  <button ion-button (click)="dropTable()">Drop Table</button>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar>
-    <button ion-button full (click)="save()">Speichern</button>
+    <button ion-button full (click)="saveCredentials()">Speichern</button>
   </ion-toolbar>
 </ion-footer>
