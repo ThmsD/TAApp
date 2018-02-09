@@ -22,7 +22,7 @@ export class DatabaseProvider {
       })
       .then((db: SQLiteObject) => {
         this.database = db;
-        this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT)', {})
+        this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT)', {})
         .then(() => console.log(this.TAG + "database initialized"))
         .catch(e => console.log(this.TAG + "Error: Database initialization - " + e));
         this.databaseReady.next(true);
@@ -34,11 +34,11 @@ export class DatabaseProvider {
     return this.databaseReady.asObservable();
   }
 
-  addCredentials(user: string, password: string) {
-    let data = [0, user, password]; //[0, user, password];
+  addCredentials(user: string, password: string, cmiid: string) {
+    let data = [0, user, password, cmiid]; //[0, user, password];
     console.log(this.TAG + "addCredentials: " + data.toString());
     // let query = "REPLACE INTO credentials (id, name, password) VALUES (0, " + user + "," + password + ");";
-    return this.database.executeSql('REPLACE INTO credentials (id, name, password) VALUES(?, ?, ?)', data).then(() => { //'REPLACE INTO credentials (id, name, password) VALUES (0, "?", "?")', {data}).then(() => {
+    return this.database.executeSql('REPLACE INTO credentials (id, name, password, cmiid) VALUES(?, ?, ?, ?)', data).then(() => { //'REPLACE INTO credentials (id, name, password) VALUES (0, "?", "?")', {data}).then(() => {
       console.log(this.TAG + "Credentials added");
     }, err => {
       console.log(this.TAG + "Error: Credentials not added - " + JSON.stringify(err));
@@ -56,7 +56,7 @@ export class DatabaseProvider {
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-           user.push({name: data.rows.item(0).name, password: "***###***"});
+           user.push({name: data.rows.item(0).name, password: "***###***", cmiid: data.rows.item(0).cmiid});
       //   }
       // }
       console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));

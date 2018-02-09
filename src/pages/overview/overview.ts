@@ -5,6 +5,8 @@ import { Http } from "@angular/http";
 import { DataDetailsPage } from "../data-details/data-details";
 import { DatabaseProvider } from '../../providers/database/database';
 import { EnergyMonitorPage } from '../energy-monitor/energy-monitor';
+import { CMIData } from "../../entities/cmiData";
+import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
 
 @IonicPage()
 @Component({
@@ -14,21 +16,52 @@ import { EnergyMonitorPage } from '../energy-monitor/energy-monitor';
 export class OverviewPage {
 
   private data: any;
+  // dataSet: Array<CMIData>;
+  // kk: CMIData;
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider, private apiHandler: ApiHandlerProvider) {
+    // this.kk = new CMIData();
+    // this.dataSet = new Array();
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider) {
+    // this.apiHandler.loadOverviewData().then(x => {
+    //   this.data = x;
+    // });
+
+    // this.apiHandler.loadData().then(x => {
+    //   this.data = x;
+    //   console.log("Data: " + JSON.stringify(this.data));
+    // });
+
+    this.apiHandler.load().then(x => {
+      this.data = x;
+      console.log("Data: " + JSON.stringify(this.data));
+    });
+    
   }
-
+  
   ionViewDidLoad() {
     console.log('ionViewDidLoad OverviewPage');
-    this.http.get("assets/testdata_full.json")
-      .subscribe(
-      res => {
-        this.data = res.json().data;
-        console.log("Success: " + JSON.stringify(this.data));
-      },
-      err => { console.log("Error: " + err) },
-      () => { console.log("Loading data completed") }
-      );
+    // this.http.get("assets/testdata_full.json")
+    //   .subscribe(
+    //   res => {
+    //     this.data = res.json().data;
+    //     console.log("Success: " + JSON.stringify(this.data));
+    //   },
+    //   err => { console.log("Error: " + err) },
+    //   () => { console.log("Loading data completed") }
+    //   );
+
+      // this.kk.name = "EVI";
+      // this.kk.values.push({description: "Aktuell: ", value: 3.3, unit: "beta"});
+      // this.dataSet.push(this.kk);
+      // this.kk = new CMIData();
+      // this.kk.name = "Photovoltaik";
+      // this.kk.values.push({description: "Aktuell: ", value: 7, unit: "kW"});
+      // this.kk.values.push({description: "Heute: ", value: 12, unit: "kWh"});
+      // this.dataSet.push(this.kk);
+      // console.log("kk: " + JSON.stringify(this.dataSet));
+
+      
+      
   }
 
   public goToSettings() {

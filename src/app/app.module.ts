@@ -16,6 +16,7 @@ import { DataPipe } from '../pipes/data/data';
 import { DataDetailsPage } from '../pages/data-details/data-details';
 import { DatabaseProvider } from '../providers/database/database';
 import { EnergyMonitorPage } from '../pages/energy-monitor/energy-monitor';
+import { ApiHandlerProvider } from '../providers/api-handler/api-handler';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { EnergyMonitorPage } from '../pages/energy-monitor/energy-monitor';
     NativeStorage,
     SettingsStoreProvider,
     DatabaseProvider,
-    SQLite
+    SQLite,
+    ApiHandlerProvider
   ]
 })
 export class AppModule {}

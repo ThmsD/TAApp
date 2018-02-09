@@ -15,6 +15,7 @@ export class SettingsPage {
 
   nm: string;
   pwd: string;
+  cmiid: string;
   // user = [];
   userMod = {};
 
@@ -36,6 +37,7 @@ export class SettingsPage {
       // this.user = data;
       this.nm = data[0].name;
       this.pwd = "password";
+      this.cmiid = data[0].cmiid;
       // console.log(this.TAG + "loadUserData: " + this.user[0].name + " * " + this.user.toString() + " + " + this.user["name"] + " - " + JSON.stringify(this.user));
     });
   }
@@ -51,7 +53,7 @@ export class SettingsPage {
   saveCredentials() {
     console.log(this.TAG + "saveCredentials() called");
     console.log(this.TAG + "saveCred: " + this.userMod['name'] + this.userMod['password']);
-    this.database.addCredentials(this.userMod['name'], this.userMod['password'])
+    this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'])
     .then(data => {
       this.loadUserData();
     });

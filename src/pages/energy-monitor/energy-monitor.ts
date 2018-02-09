@@ -64,10 +64,11 @@ export class EnergyMonitorPage {
   }
 
   setData() {
-    let verbrauch = Number(this.replace(this.verbrauchGesamt.value.substring(0, this.verbrauchGesamt.value.indexOf(" ")), ",","."));
-    let erzeugt = Number(this.replace(this.photovoltaik.value.substring(0, this.photovoltaik.value.indexOf(" ")), ",","."));
-    let evi = Number(this.replace(this.evi.value.substring(0, this.evi.value.indexOf(" ")), ",","."));
+    let verbrauch = Number(this.replace(this.verbrauchGesamt.value, ",","."));
+    let erzeugt = Number(this.replace(this.photovoltaik.value, ",","."));;
+    let evi = Number(this.replace(this.evi.value, ",","."));;
     let strom = erzeugt - verbrauch;
+
     if(strom < 0) {
       this.strom.name = "Bezug";
       this.strom.arrow = "150deg";

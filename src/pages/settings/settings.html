@@ -10,22 +10,19 @@
 <ion-content padding>
   <ion-list>
     <ion-list-header>Konto</ion-list-header>
-<!--     <button ion-item>
-      <ion-label>Benutzername/E-Mail</ion-label>
-      <ion-note item-end>usrname</ion-note>
-    </button>
-    <button ion-item>
-        <ion-label>Passwort</ion-label>
-        <ion-note item-end>*******</ion-note>
-      </button> -->
-      <ion-item>
-        <ion-label floating>Benutzername</ion-label>
-        <ion-input type="text" [(ngModel)]="userMod.name" [(value)]="nm"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label floating>Passwort</ion-label>
-        <ion-input type="password" [(ngModel)]="userMod.password" [value]="pwd"></ion-input>
-      </ion-item>
+    <ion-item>
+      <ion-label floating>Benutzername</ion-label>
+      <ion-input type="text" [(ngModel)]="userMod.name" [(value)]="nm"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Passwort</ion-label>
+      <ion-input type="password" [(ngModel)]="userMod.password" [value]="pwd"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>C.M.I. ID</ion-label>
+      <ion-input type="text" [(ngModel)]="userMod.password" [value]="cmiid"></ion-input>
+    </ion-item>
+    <ion-item></ion-item>
   </ion-list>
   <ion-list>
     <ion-item>
