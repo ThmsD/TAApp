@@ -91,4 +91,47 @@ export class SettingsPage {
     //   err => { console.log("POST-Error: " + err) });
   }
 
+  accessToken() {
+    let headers = new Headers();
+    let username: string;
+    let pwd: string;
+    this.database.getCredentials().then(data => {
+      username = data[0].name;
+      pwd = data[0].password;
+      console.log(this.TAG + "Name+Pwd: " + username + " " + pwd);
+
+      let base64String = btoa(username + ":" + pwd); //btoa("rene_peinl" + ":" + "HShofRPE2017"); 
+      console.log(base64String + " = " + atob(base64String));
+      headers.append('Authorization', 'Basic ' + base64String);
+      let options = new RequestOptions({headers:headers});
+      this.http.post("https://api.ta.co.at/v1/access_token", {}, options) 
+        .subscribe(res => {
+          // console.log("Post: " + res);
+          // console.log("1: " + JSON.stringify(res));
+          // console.log("2: " + JSON.stringify(res.json()));
+          console.log("3: " + res.text());
+          let js = JSON.parse(res.text()).data.access_token;
+          let cookid = js.cookid;
+          let username = js.username;
+          console.log("js: " + cookid + ":" + username);
+        },
+        err => { console.log("POST-Error: " + err) });
+    });
+  }
+
+  address() {
+    this.http.post("https://api.ta.co.at/v1/cmis/CMI010492/address?mode=all", {}, {}) 
+    .subscribe(res => {
+      console.log("Post: " + res);
+      console.log("1: " + JSON.stringify(res));
+      console.log("2: " + JSON.stringify(res.json()));
+      console.log("3: " + res.text());
+      let js = JSON.parse(res.text()).data.access_token;
+      let cookid = js.cookid;
+      let username = js.username;
+      console.log("js: " + cookid + ":" + username);
+    },
+    err => { console.log("POST-Error: " + err) });
+  }
+
 }

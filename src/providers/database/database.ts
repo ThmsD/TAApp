@@ -56,7 +56,7 @@ export class DatabaseProvider {
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-           user.push({name: data.rows.item(0).name, password: "***###***", cmiid: data.rows.item(0).cmiid});
+           user.push({name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid});
       //   }
       // }
       console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));

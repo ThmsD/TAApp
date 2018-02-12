@@ -10,19 +10,19 @@ export class DataPipe implements PipeTransform {
   transform(value: string, ...args) {
     switch (value) {
       case "EVI":
-        return "EVI";
+        return "EVI_color";
       case "Photovoltaik":
-        return "PV-Solar";
+        return "PV-Solar_color";
       case "Heizung":
-        return "Heizung";
+        return "Heizung_color";
       case "Solarthermie":
-        return "PV-Solarthermie";
+        return "PV-Solarthermie_color";
       case "Pufferspeicher":
-        return "Pufferspeicher";
+        return "Pufferspeicher_color";
       case "Verbrauch":
         return "Stromzaehler";
       case "Energiespeicher":
-        return "Battery";
+        return "Battery_color";
       case "Energiemonitor":
         return "Strommast";
       case "Strom":
