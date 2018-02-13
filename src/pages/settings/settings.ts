@@ -120,7 +120,7 @@ export class SettingsPage {
   }
 
   address() {
-    this.http.post("https://api.ta.co.at/v1/cmis/CMI010492/address?mode=all", {}, {}) 
+    this.http.get("https://api.ta.co.at/v1/cmis/CMI010492/address?mode=all", {}) 
     .subscribe(res => {
       console.log("Post: " + res);
       console.log("1: " + JSON.stringify(res));
@@ -131,7 +131,7 @@ export class SettingsPage {
       let username = js.username;
       console.log("js: " + cookid + ":" + username);
     },
-    err => { console.log("POST-Error: " + err) });
+    err => { console.log("GET-Error: " + err) });
   }
 
 }
