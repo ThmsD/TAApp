@@ -20,13 +20,13 @@ export class DatabaseProvider {
         name: 'data.db',
         location: 'default'
       })
-      .then((db: SQLiteObject) => {
-        this.database = db;
-        this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT)', {})
-        .then(() => console.log(this.TAG + "database initialized"))
-        .catch(e => console.log(this.TAG + "Error: Database initialization - " + e));
-        this.databaseReady.next(true);
-      })
+        .then((db: SQLiteObject) => {
+          this.database = db;
+          this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT)', {})
+            .then(() => console.log(this.TAG + "database initialized"))
+            .catch(e => console.log(this.TAG + "Error: Database initialization - " + e));
+          this.databaseReady.next(true);
+        })
     });
   }
 
@@ -56,7 +56,7 @@ export class DatabaseProvider {
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-           user.push({name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid});
+      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid });
       //   }
       // }
       console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
@@ -64,6 +64,23 @@ export class DatabaseProvider {
     }, err => {
       console.log(this.TAG + err);
       return [];
+    })
+  }
+
+  addAccessToken(token: string) {
+    let data = [token, 0];
+    this.database.executeSql('UPDATE credentials SET token=? WHERE id = ?', data).then(() => {
+      console.log(this.TAG + "Token added");
+    }, err => {
+      console.log(this.TAG + "Error: Token not added - " + JSON.stringify(err));
+    });
+  }
+
+  getAccessToken() {
+    this.database.executeSql('SELECT * FROM credentials', []).then((data) => {
+      console.log(this.TAG + JSON.stringify(data.rows.item(0)));
+    }, err => {
+      console.log(this.TAG + err);
     })
   }
 
