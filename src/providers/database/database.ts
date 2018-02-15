@@ -22,9 +22,19 @@ export class DatabaseProvider {
       })
         .then((db: SQLiteObject) => {
           this.database = db;
+
           this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT)', {})
-            .then(() => console.log(this.TAG + "database initialized"))
-            .catch(e => console.log(this.TAG + "Error: Database initialization - " + e));
+            .then(() => console.log(this.TAG + "table credentials initialized"))
+            .catch(e => console.log(this.TAG + "Error: credentials initialization - " + e));
+
+          this.database.executeSql('CREATE TABLE IF NOT EXISTS devices(id TEXT PRIMARY KEY, name TEXT, unit TEXT)', {})
+            .then(() => console.log(this.TAG + "table devices initialized"))
+            .catch(e => console.log(this.TAG + "Error: devices initialization - " + e));
+
+          this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), FOREIGN KEY(device_id) REFERENCES devices(id))', {})
+            .then(() => console.log(this.TAG + "table measurements initialized"))
+            .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
+
           this.databaseReady.next(true);
         })
     });
@@ -112,3 +122,10 @@ export class DatabaseProvider {
   // }
 
 }
+
+
+
+
+// SELECT * FROM test WHERE logged BETWEEN "2018-02-09" AND "2018-02-12"
+// SELECT * FROM test ORDER BY datetime(logged) DESC    // Limit 1
+// INSERT INTO orders VALUES (null, 2, 2);
