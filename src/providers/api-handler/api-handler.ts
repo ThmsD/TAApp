@@ -6,6 +6,8 @@ import { DatabaseProvider } from '../database/database';
 @Injectable()
 export class ApiHandlerProvider {
 
+  private basicURL: string = "https://api.ta.co.at/v1/cmis/";
+
   data: any;
   private cmiData: CMIData;
   dataSet: Array<CMIData>;
@@ -98,8 +100,8 @@ export class ApiHandlerProvider {
       let base64String = btoa(username + ":" + pwd); //btoa("rene_peinl" + ":" + "HShofRPE2017"); 
       console.log(base64String + " = " + atob(base64String));
       headers.append('Authorization', 'Basic ' + base64String);
-      let options = new RequestOptions({headers:headers});
-      this.http.post("https://api.ta.co.at/v1/access_token", {}, options) 
+      let options = new RequestOptions({ headers: headers });
+      this.http.post("https://api.ta.co.at/v1/access_token", {}, options)
         .subscribe(res => {
           // console.log("3: " + res.text());
           let js = JSON.parse(res.text()).data.access_token;
@@ -112,19 +114,44 @@ export class ApiHandlerProvider {
     });
   }
 
-  getAddress() {
-    this.http.get("https://api.ta.co.at/v1/cmis/CMI010492/address?mode=all", {}) 
-    .subscribe(res => {
-      console.log("Post: " + res);
-      console.log("1: " + JSON.stringify(res));
-      console.log("2: " + JSON.stringify(res.json()));
-      console.log("3: " + res.text());
-      let js = JSON.parse(res.text()).data.access_token;
-      let cookid = js.cookid;
-      let username = js.username;
-      console.log("js: " + cookid + ":" + username);
-    },
-    err => { console.log("GET-Error: " + err) });
+  getAddress() { // not needed
+    this.http.get(this.basicURL + "CMI010492/address?mode=all", {})
+      .subscribe(res => {
+        console.log("Get: " + res);
+        console.log("1: " + JSON.stringify(res));
+        console.log("2: " + JSON.stringify(res.json()));
+        console.log("3: " + res.text());
+        let js = JSON.parse(res.text()).data.access_token;
+        let cookid = js.cookid;
+        let username = js.username;
+        console.log("js: " + cookid + ":" + username);
+      },
+      err => { console.log("GET-Error: " + err) });
+  }
+
+  /**
+   * GET-Request to obtain all data that is available for the
+   * saved profile in the given timeframe.
+   * 
+   * @param from in the format YYYY-MM-DD hh:mm:ss
+   * @param to in the format YYYY-MM-DD hh:mm:ss
+   */
+  async getLogging(from: string, to: string) {
+    let cmiid = await this.database.getCMIId();
+    let profile = await this.database.getProfile();
+    console.log(this.TAG + "CMIID: " + cmiid);
+    console.log(this.TAG + "PROFILE: " + profile);
+    this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=2018-02-14 00:00:00&to=2018-02-16 12:00:00", {})
+      .subscribe(res => {
+        console.log("Get: " + res);
+        console.log("- : " + res.text());
+        let description = JSON.parse(res.json()).data.description;
+        let units = JSON.parse(res.json()).data.units;
+        let values = JSON.parse(res.json()).data.val;
+
+        // continue here
+      },
+      err => { console.log("GET-Error: " + err) });
   }
 
   test() {

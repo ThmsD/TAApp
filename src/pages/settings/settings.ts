@@ -17,6 +17,7 @@ export class SettingsPage {
   nm: string;
   pwd: string;
   cmiid: string;
+  profile: string;
   // user = [];
   userMod = {};
 
@@ -39,6 +40,7 @@ export class SettingsPage {
       this.nm = data[0].name;
       this.pwd = "password";
       this.cmiid = data[0].cmiid;
+      this.profile = data[0].profile;
       // console.log(this.TAG + "loadUserData: " + this.user[0].name + " * " + this.user.toString() + " + " + this.user["name"] + " - " + JSON.stringify(this.user));
     });
   }
@@ -54,7 +56,7 @@ export class SettingsPage {
   saveCredentials() {
     console.log(this.TAG + "saveCredentials() called");
     console.log(this.TAG + "saveCred: " + this.userMod['name'] + this.userMod['password']);
-    this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'])
+    this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
     .then(data => {
       this.loadUserData();
       this.apiHandler.getAccessToken();
@@ -132,6 +134,11 @@ export class SettingsPage {
 
   getToken() {
     this.database.getAccessToken();
+  }
+
+  test() {
+    console.log("TEST()");
+    this.apiHandler.getLogging("2018-02-14 00:00:00", "2018-02-15 00:00:00");
   }
 
 }

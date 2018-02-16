@@ -23,7 +23,7 @@ export class DatabaseProvider {
         .then((db: SQLiteObject) => {
           this.database = db;
 
-          this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT)', {})
+          this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT, profile TEXT)', {})
             .then(() => console.log(this.TAG + "table credentials initialized"))
             .catch(e => console.log(this.TAG + "Error: credentials initialization - " + e));
 
@@ -31,6 +31,7 @@ export class DatabaseProvider {
             .then(() => console.log(this.TAG + "table devices initialized"))
             .catch(e => console.log(this.TAG + "Error: devices initialization - " + e));
 
+          // Error -> Solution(?): following code netsted in 'create devices table'
           this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), FOREIGN KEY(device_id) REFERENCES devices(id))', {})
             .then(() => console.log(this.TAG + "table measurements initialized"))
             .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
@@ -44,11 +45,11 @@ export class DatabaseProvider {
     return this.databaseReady.asObservable();
   }
 
-  addCredentials(user: string, password: string, cmiid: string) {
-    let data = [0, user, password, cmiid]; //[0, user, password];
+  addCredentials(user: string, password: string, cmiid: string, profile: string) {
+    let data = [0, user, password, cmiid, profile]; //[0, user, password];
     console.log(this.TAG + "addCredentials: " + data.toString());
     // let query = "REPLACE INTO credentials (id, name, password) VALUES (0, " + user + "," + password + ");";
-    return this.database.executeSql('REPLACE INTO credentials (id, name, password, cmiid) VALUES(?, ?, ?, ?)', data).then(() => { //'REPLACE INTO credentials (id, name, password) VALUES (0, "?", "?")', {data}).then(() => {
+    return this.database.executeSql('REPLACE INTO credentials (id, name, password, cmiid, profile) VALUES(?, ?, ?, ?, ?)', data).then(() => { //'REPLACE INTO credentials (id, name, password) VALUES (0, "?", "?")', {data}).then(() => {
       console.log(this.TAG + "Credentials added");
     }, err => {
       console.log(this.TAG + "Error: Credentials not added - " + JSON.stringify(err));
@@ -66,7 +67,7 @@ export class DatabaseProvider {
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid });
+      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile});
       //   }
       // }
       console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
@@ -91,6 +92,19 @@ export class DatabaseProvider {
       console.log(this.TAG + JSON.stringify(data.rows.item(0)));
     }, err => {
       console.log(this.TAG + err);
+    })
+  }
+
+  getCMIId() {
+    return this.database.executeSql('SELECT cmiid FROM credentials', []).then((data) => {
+      console.log("miid: " + data.rows.item(0).cmiid);
+      return data.rows.item(0).cmiid;
+    })
+  }
+
+  getProfile() {
+    return this.database.executeSql('SELECT profile FROM credentials', []).then((data) => {
+      return data.rows.item(0).profile;
     })
   }
 

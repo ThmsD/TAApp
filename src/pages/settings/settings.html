@@ -22,6 +22,10 @@
       <ion-label floating>C.M.I. ID</ion-label>
       <ion-input type="text" [(ngModel)]="userMod.cmiid" [value]="cmiid"></ion-input>
     </ion-item>
+    <ion-item>
+      <ion-label floating>Profile</ion-label>
+      <ion-input type="text" [(ngModel)]="userMod.profile" [value]="profile"></ion-input>
+    </ion-item>
     <ion-item></ion-item>
   </ion-list>
   <ion-list>
@@ -34,6 +38,7 @@
   <button ion-button (click)="getAddress()">Address</button>
   <button ion-button (click)="addToken()">Add</button>
   <button ion-button (click)="getToken()">Get</button>
+  <button ion-button (click)="test()">Test</button>
 </ion-content>
 
 <ion-footer>
