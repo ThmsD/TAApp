@@ -143,13 +143,19 @@ export class ApiHandlerProvider {
     console.log(this.TAG + "PROFILE: " + profile);
     this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=2018-02-14 00:00:00&to=2018-02-16 12:00:00", {})
       .subscribe(res => {
-        console.log("Get: " + res);
-        console.log("- : " + res.text());
-        let description = JSON.parse(res.json()).data.description;
-        let units = JSON.parse(res.json()).data.units;
-        let values = JSON.parse(res.json()).data.val;
+        // console.log("RES: " + JSON.stringify(res.json()));
+        // console.log("Get: " + res);
+        // console.log("- : " + res.text());
+        let description = JSON.parse(res.text()).data.description;
+        let units = JSON.parse(res.text()).data.units;
+        let values = JSON.parse(res.text()).data.val;
 
+        this.database.addDescriptions(description);
+        this.database.addUnits(units);
+        
         // continue here
+        
+
       },
       err => { console.log("GET-Error: " + err) });
   }

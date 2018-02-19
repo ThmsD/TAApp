@@ -32,7 +32,7 @@ export class DatabaseProvider {
             .catch(e => console.log(this.TAG + "Error: devices initialization - " + e));
 
           // Error -> Solution(?): following code netsted in 'create devices table'
-          this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), FOREIGN KEY(device_id) REFERENCES devices(id))', {})
+          this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), device_id TEXT, FOREIGN KEY(device_id) REFERENCES devices(id))', {})
             .then(() => console.log(this.TAG + "table measurements initialized"))
             .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
 
@@ -67,7 +67,7 @@ export class DatabaseProvider {
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile});
+      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile });
       //   }
       // }
       console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
@@ -93,6 +93,38 @@ export class DatabaseProvider {
     }, err => {
       console.log(this.TAG + err);
     })
+  }
+
+  addDescriptions(description: any) {
+    let name: string;
+    for (var item in description) {
+      name = description[item].substring(description[item].indexOf(" ")+1);
+      console.log("name: " + name);
+      this.database.executeSql('INSERT INTO devices(id, name) VALUES(?, ?)', [item, name]).then(() => {
+        console.log(this.TAG + "Descriptions added");
+      }, err => {
+        console.log(this.TAG + "Error: Descriptions not added - " + JSON.stringify(err));
+      });
+      // console.log("Key:" + item);
+      // console.log("Value:" + description[item]);
+    }
+    // this.database.executeSql('INSERT INTO devices(id, name) VALUES(?, ?)', []).then(() => {
+    //   console.log(this.TAG + "Descriptions added");
+    // }, err => {
+    //   console.log(this.TAG + "Error: Descriptions not added - " + JSON.stringify(err));
+    // });
+  }
+
+  addUnits(units: any) {
+    let unit: string;
+    for (var item in units) {
+      unit = units[item].unity;
+      this.database.executeSql('UPDATE devices SET unit = ? WHERE id = ?', [unit, item]).then(() => {
+        console.log(this.TAG + "Units added");
+      }, err => {
+        console.log(this.TAG + "Error: Units not added - " + JSON.stringify(err));
+      });
+    }
   }
 
   getCMIId() {

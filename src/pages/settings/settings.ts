@@ -137,7 +137,6 @@ export class SettingsPage {
   }
 
   test() {
-    console.log("TEST()");
     this.apiHandler.getLogging("2018-02-14 00:00:00", "2018-02-15 00:00:00");
   }
 
