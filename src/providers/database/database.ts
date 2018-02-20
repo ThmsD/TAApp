@@ -127,6 +127,40 @@ export class DatabaseProvider {
     }
   }
 
+  addValues(values: any) {
+    let dateTime: string;
+    for (var i = 0; i < Object.keys(values).length; i++) {
+      dateTime = values[i]["zeit"];
+      for (var e in values[i]) {
+        if (e !== "zeit") {
+          console.log("E: " + e);
+        }
+      }
+    }
+
+    // let log: any
+    // console.log("LEN: " + Object.keys(values).length);
+    // console.log("1: " + JSON.stringify(values[13])); // full entry
+    // console.log(JSON.stringify("2: " + Object.keys(values[13]))); // keys (zeit, a1, a2, a3, ...)
+    // for(var i in values[13]) {
+    //   console.log("I: " + i); //key (a1)
+    //   console.log("FOR: " + values[13][i]); // value (0.07, ...)
+    // }
+    // console.log("ZEIT: " + values[13]["zeit"]);
+
+    
+    // for (log in values) {
+    //   console.log("ANY: " + log);
+    //   console.log("OBJ: " + JSON.stringify(values[log]));
+    //   console.log("KEYS: " + values[log].keys);
+    //   // for (var item in log) {
+    //   //   console.log("VAL: " + item); 
+    //   // }
+    //   // console.log("VAL: " + item);
+    // }
+    // console.log("VAL: " + values[12]);
+  }
+
   getCMIId() {
     return this.database.executeSql('SELECT cmiid FROM credentials', []).then((data) => {
       console.log("miid: " + data.rows.item(0).cmiid);

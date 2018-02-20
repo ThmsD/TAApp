@@ -150,8 +150,9 @@ export class ApiHandlerProvider {
         let units = JSON.parse(res.text()).data.units;
         let values = JSON.parse(res.text()).data.val;
 
-        this.database.addDescriptions(description);
-        this.database.addUnits(units);
+        // this.database.addDescriptions(description);
+        // this.database.addUnits(units);
+        this.database.addValues(values);
         
         // continue here
         
