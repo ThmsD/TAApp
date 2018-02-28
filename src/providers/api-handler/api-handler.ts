@@ -141,22 +141,20 @@ export class ApiHandlerProvider {
     let profile = await this.database.getProfile();
     console.log(this.TAG + "CMIID: " + cmiid);
     console.log(this.TAG + "PROFILE: " + profile);
-    this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=2018-02-14 00:00:00&to=2018-02-16 12:00:00", {})
+    this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=" + from + "&to=" + to, {}) //2018-02-14 00:00:00&to=2018-02-14 12:00:00", {})
       .subscribe(res => {
-        // console.log("RES: " + JSON.stringify(res.json()));
-        // console.log("Get: " + res);
-        // console.log("- : " + res.text());
         let description = JSON.parse(res.text()).data.description;
         let units = JSON.parse(res.text()).data.units;
         let values = JSON.parse(res.text()).data.val;
 
+        // console.log("UNITS: " + JSON.stringify(units));
+        // console.log("DESC: " + JSON.stringify(description));
+        // console.log("VAL: " + JSON.stringify(values));
+
         // this.database.addDescriptions(description);
         // this.database.addUnits(units);
+        this.database.addDevices(description, units);
         this.database.addValues(values);
-        
-        // continue here
-        
-
       },
       err => { console.log("GET-Error: " + err) });
   }

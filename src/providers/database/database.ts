@@ -95,10 +95,12 @@ export class DatabaseProvider {
     })
   }
 
+
+  // ############################## wird nicht mehr gebraucht?! ###################################
   addDescriptions(description: any) {
     let name: string;
     for (var item in description) {
-      name = description[item].substring(description[item].indexOf(" ")+1);
+      name = description[item].substring(description[item].indexOf(" ") + 1);
       console.log("name: " + name);
       this.database.executeSql('INSERT INTO devices(id, name) VALUES(?, ?)', [item, name]).then(() => {
         console.log(this.TAG + "Descriptions added");
@@ -127,38 +129,50 @@ export class DatabaseProvider {
     }
   }
 
+  // ############################## wird nicht mehr gebraucht?! ###################################
+  // ##############################             ENDE            ###################################
+
   addValues(values: any) {
     let dateTime: string;
     for (var i = 0; i < Object.keys(values).length; i++) {
       dateTime = values[i]["zeit"];
       for (var e in values[i]) {
         if (e !== "zeit") {
-          console.log("E: " + e);
+          this.database.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e]).then(() => {
+          }, err => {
+            console.log(this.TAG + "Error: Measurements not added - " + JSON.stringify(err));
+          });
+          //values[i][e] = value (e.g. 0.07); 
+          // e = key (e.g. a1);
+          // console.log("E: " + values[i][e] + "  -  " + e); 
         }
       }
     }
 
-    // let log: any
-    // console.log("LEN: " + Object.keys(values).length);
-    // console.log("1: " + JSON.stringify(values[13])); // full entry
-    // console.log(JSON.stringify("2: " + Object.keys(values[13]))); // keys (zeit, a1, a2, a3, ...)
-    // for(var i in values[13]) {
-    //   console.log("I: " + i); //key (a1)
-    //   console.log("FOR: " + values[13][i]); // value (0.07, ...)
-    // }
-    // console.log("ZEIT: " + values[13]["zeit"]);
+    // this.database.executeSql('SELECT * FROM measurements', []).then((data) => {
+    //   console.log(this.TAG + "MEASUREMENT: " + JSON.stringify(data.rows.item(0)));
+    //   console.log(this.TAG + "MEASUREMENT: " + JSON.stringify(data.rows.item(240)));
+    // }, err => {
+    //   console.log(this.TAG + err);
+    // });
 
-    
-    // for (log in values) {
-    //   console.log("ANY: " + log);
-    //   console.log("OBJ: " + JSON.stringify(values[log]));
-    //   console.log("KEYS: " + values[log].keys);
-    //   // for (var item in log) {
-    //   //   console.log("VAL: " + item); 
-    //   // }
-    //   // console.log("VAL: " + item);
-    // }
-    // console.log("VAL: " + values[12]);
+  }
+
+  addDevices(description: any, units: any) {
+    for (var device in description) { // device = "a1"; description[device] = "Strom PV"
+      this.database.executeSql('INSERT INTO devices(id, name) VALUES(?, ?)', [device, description[device]]).then(() => {
+      }, err => {
+        console.log(this.TAG + "Error: device not added - " + JSON.stringify(err));
+      });
+
+    }
+    for (var device in units) { // device = "a1"; units[device].unity = "kW"
+      console.log("ERR? " + units[device].unity + "  " + device);
+      this.database.executeSql('UPDATE devices SET unit = ? WHERE id = ?', [units[device].unity, device]).then(() => {
+      }, err => {
+        console.log(this.TAG + "Error: unit not added to device - " + JSON.stringify(err));
+      });
+    }
   }
 
   getCMIId() {
