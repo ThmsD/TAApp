@@ -5,21 +5,24 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
 import { OverviewPage } from '../pages/overview/overview';
+import { DatabaseProvider } from '../providers/database/database';
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = OverviewPage; //HomePage;
+  rootPage: any = OverviewPage; //HomePage;
+  db: DatabaseProvider;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, db: DatabaseProvider) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
-      console.log("RRReady!");
     });
     console.log("Ready!");
+
   }
+
 }
 

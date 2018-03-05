@@ -7,6 +7,7 @@ import { DatabaseProvider } from '../../providers/database/database';
 import { EnergyMonitorPage } from '../energy-monitor/energy-monitor';
 import { CMIData } from "../../entities/cmiData";
 import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
+import { SplashScreen } from '@ionic-native/splash-screen';
 
 @IonicPage()
 @Component({
@@ -16,9 +17,10 @@ import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
 export class OverviewPage {
 
   private data: any;
+  private dbReady: boolean = false;
   // dataSet: Array<CMIData>;
   // kk: CMIData;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider, private apiHandler: ApiHandlerProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider, private apiHandler: ApiHandlerProvider, splashScreen: SplashScreen) {
     // this.kk = new CMIData();
     // this.dataSet = new Array();
 
@@ -30,14 +32,16 @@ export class OverviewPage {
     //   this.data = x;
     //   console.log("Data: " + JSON.stringify(this.data));
     // });
-
-    this.apiHandler.load().then(x => {
-      this.data = x;
-      console.log("Data: " + JSON.stringify(this.data));
-    });
     
+    this.loadView();
+
   }
-  
+
+
+  ngOnInit() {
+
+  }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad OverviewPage');
     // this.http.get("assets/testdata_full.json")
@@ -50,18 +54,45 @@ export class OverviewPage {
     //   () => { console.log("Loading data completed") }
     //   );
 
-      // this.kk.name = "EVI";
-      // this.kk.values.push({description: "Aktuell: ", value: 3.3, unit: "beta"});
-      // this.dataSet.push(this.kk);
-      // this.kk = new CMIData();
-      // this.kk.name = "Photovoltaik";
-      // this.kk.values.push({description: "Aktuell: ", value: 7, unit: "kW"});
-      // this.kk.values.push({description: "Heute: ", value: 12, unit: "kWh"});
-      // this.dataSet.push(this.kk);
-      // console.log("kk: " + JSON.stringify(this.dataSet));
+    // this.kk.name = "EVI";
+    // this.kk.values.push({description: "Aktuell: ", value: 3.3, unit: "beta"});
+    // this.dataSet.push(this.kk);
+    // this.kk = new CMIData();
+    // this.kk.name = "Photovoltaik";
+    // this.kk.values.push({description: "Aktuell: ", value: 7, unit: "kW"});
+    // this.kk.values.push({description: "Heute: ", value: 12, unit: "kWh"});
+    // this.dataSet.push(this.kk);
+    // console.log("kk: " + JSON.stringify(this.dataSet));
 
-      
-      
+
+
+  }
+
+  loadView() {
+    console.log("asdb1 - " + this.dbReady);
+
+    this.database.getDatabaseState().subscribe(rdy => {
+      if (rdy) {
+        console.log("Database seems to be ready");
+        this.database.credentialsAvailable().then(x => {
+          if (x === true) {
+            this.dbReady = true;
+            this.apiHandler.getAccessToken();
+            // this.database HERE WEITER!
+          }
+          else this.navCtrl.push(SettingsPage);
+
+          this.apiHandler.load().then(x => {
+            this.data = x;
+            console.log("Data: " + JSON.stringify(this.data));
+          });
+
+        });
+
+
+
+      }
+    });
   }
 
   public goToSettings() {
@@ -69,8 +100,8 @@ export class OverviewPage {
   }
 
   public showDetails(item: any) {
-    if(JSON.parse(JSON.stringify(item)).name == "Energiemonitor") {
-      this.navCtrl.push(EnergyMonitorPage, { "item": item , "data": this.data});
+    if (JSON.parse(JSON.stringify(item)).name == "Energiemonitor") {
+      this.navCtrl.push(EnergyMonitorPage, { "item": item, "data": this.data });
     } else {
       this.navCtrl.push(DataDetailsPage, { "item": item });
     }

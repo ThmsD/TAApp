@@ -12,33 +12,40 @@ export class DatabaseProvider {
   public database: SQLiteObject;
   private databaseReady: BehaviorSubject<boolean>;
 
+  private lastLogged: String;
+
+
   constructor(private sqlite: SQLite, private platform: Platform) {
-    console.log('Hello DatabaseProvider');
+    // console.log('Hello DatabaseProvider');
+    this.initialize();
+  }
+
+  initialize() {
     this.databaseReady = new BehaviorSubject(false);
-    this.platform.ready().then(() => {
-      this.sqlite.create({
-        name: 'data.db',
-        location: 'default'
+    // this.platform.ready().then(() => {
+    this.sqlite.create({
+      name: 'data.db',
+      location: 'default'
+    })
+      .then((db: SQLiteObject) => {
+        this.database = db;
+
+        this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT, profile TEXT)', {})
+          .then(() => console.log(this.TAG + "table credentials initialized"))
+          .catch(e => console.log(this.TAG + "Error: credentials initialization - " + e));
+
+        this.database.executeSql('CREATE TABLE IF NOT EXISTS devices(id TEXT PRIMARY KEY, name TEXT, unit TEXT)', {})
+          .then(() => console.log(this.TAG + "table devices initialized"))
+          .catch(e => console.log(this.TAG + "Error: devices initialization - " + e));
+
+        // Error -> Solution(?): following code netsted in 'create devices table'
+        this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), device_id TEXT, FOREIGN KEY(device_id) REFERENCES devices(id))', {})
+          .then(() => console.log(this.TAG + "table measurements initialized"))
+          .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
+
+        this.databaseReady.next(true);
       })
-        .then((db: SQLiteObject) => {
-          this.database = db;
-
-          this.database.executeSql('CREATE TABLE IF NOT EXISTS credentials(id INTEGER PRIMARY KEY, name VARCHAR(18), password TEXT, cmiid TEXT, token TEXT, profile TEXT)', {})
-            .then(() => console.log(this.TAG + "table credentials initialized"))
-            .catch(e => console.log(this.TAG + "Error: credentials initialization - " + e));
-
-          this.database.executeSql('CREATE TABLE IF NOT EXISTS devices(id TEXT PRIMARY KEY, name TEXT, unit TEXT)', {})
-            .then(() => console.log(this.TAG + "table devices initialized"))
-            .catch(e => console.log(this.TAG + "Error: devices initialization - " + e));
-
-          // Error -> Solution(?): following code netsted in 'create devices table'
-          this.database.executeSql('CREATE TABLE IF NOT EXISTS measurements(id INTEGER PRIMARY KEY, logged DATETIME, value DECIMAL(5,2), device_id TEXT, FOREIGN KEY(device_id) REFERENCES devices(id))', {})
-            .then(() => console.log(this.TAG + "table measurements initialized"))
-            .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
-
-          this.databaseReady.next(true);
-        })
-    });
+    // });
   }
 
   getDatabaseState() {
@@ -192,6 +199,28 @@ export class DatabaseProvider {
     this.database.executeSql('delete from credentials', {}).then(res => {
       console.log(this.TAG + "table dropped");
     });
+  }
+
+  credentialsAvailable() {
+    return this.database.executeSql('SELECT * from credentials', []).then((data) => {
+      if (data.rows.length === 1) return true;
+      else return false;
+    }, err => {
+      console.log(this.TAG + "Error: can't check for available credentials - " + JSON.stringify(err));
+    })
+  }
+
+  loggedDataAvailable() {
+    return this.database.executeSql('SELECT * from measurements', []).then(data => {
+      if (data.rows.length === 1) return true;
+      else return false;
+    }, err => {
+      console.log(this.TAG + "Error: can't check for available credentials - " + JSON.stringify(err));
+    });
+  }
+
+  getLatestData() {
+    // HERE
   }
 
   // public createDatabase() {

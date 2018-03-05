@@ -160,7 +160,7 @@ export class ApiHandlerProvider {
   }
 
   test() {
-    return "test function";
+    
   }
 
 }

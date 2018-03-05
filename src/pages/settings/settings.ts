@@ -31,7 +31,7 @@ export class SettingsPage {
         this.loadUserData();
       }
     })
-    console.log(this.TAG + "constuctor");
+    console.log(this.TAG + "constructor");
   }
 
   loadUserData() {
@@ -137,7 +137,9 @@ export class SettingsPage {
   }
 
   test() {
-    this.apiHandler.getLogging("2018-02-14 00:00:00", "2018-02-15 00:00:00");
+    this.apiHandler.getLogging("2018-01-01 00:00:00", "2018-01-31 23:59:59");
+    // this.apiHandler.test();
+    // this.database.credentialsAvailable();
   }
 
 }
