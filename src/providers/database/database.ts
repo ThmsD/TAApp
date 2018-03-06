@@ -12,11 +12,13 @@ export class DatabaseProvider {
   public database: SQLiteObject;
   private databaseReady: BehaviorSubject<boolean>;
 
-  private lastLogged: String;
+  private latestLogged: String;
+  private bHasLoggedData: Boolean;
 
 
   constructor(private sqlite: SQLite, private platform: Platform) {
     // console.log('Hello DatabaseProvider');
+    this.bHasLoggedData = false;
     this.initialize();
   }
 
@@ -68,8 +70,8 @@ export class DatabaseProvider {
       let user = [];
       // console.log(this.TAG + "GetCreds1: " + JSON.stringify(data));
       // console.log(this.TAG + "GetCreds2: " + JSON.stringify(data.rows));
-      console.log(this.TAG + "GetCreds3: " + JSON.stringify(data.rows.item(0)));
-      console.log(this.TAG + "0getCreds: " + data.rows.item(0).id + "; " + data.rows.item(0).name + "; " + data.rows.item(0).password + "; " + data.rows.length);
+      // console.log(this.TAG + "GetCreds3: " + JSON.stringify(data.rows.item(0)));
+      // console.log(this.TAG + "0getCreds: " + data.rows.item(0).id + "; " + data.rows.item(0).name + "; " + data.rows.item(0).password + "; " + data.rows.length);
       // console.log(this.TAG + "1getCreds: " + data.rows.item(1).id + "; " + data.rows.item(1).name + "; " + data.rows.item(1).password + "; " + data.rows.length);
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
@@ -77,8 +79,9 @@ export class DatabaseProvider {
       user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile });
       //   }
       // }
-      console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
-      return user;
+      // console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
+      // return user;
+      return data.rows.item(0);
     }, err => {
       console.log(this.TAG + err);
       return [];
@@ -220,7 +223,19 @@ export class DatabaseProvider {
   }
 
   getLatestData() {
-    // HERE
+    return this.database.executeSql('SELECT * FROM measurements ORDER BY datetime(logged) DESC Limit 1', []).then(data => {
+      console.log("LOGGED: " + data.rows.length);
+      this.latestLogged = data.rows.item(0).logged;
+      console.log(this.TAG + "Latest Logged" + this.latestLogged);
+      this.bHasLoggedData = true;
+      return this.latestLogged;
+    }, err => {
+      console.log(this.TAG + "Error: can't get latest log - " + JSON.stringify(err));
+    })
+  }
+
+  hasLoggedData() {
+    return this.bHasLoggedData;
   }
 
   // public createDatabase() {

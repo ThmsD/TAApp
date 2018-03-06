@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
 import { Http, Headers, RequestOptions } from "@angular/http";
 import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
+import { DateTime } from 'ionic-angular/components/datetime/datetime';
 
 
 @IonicPage()
@@ -37,10 +38,17 @@ export class SettingsPage {
   loadUserData() {
     this.database.getCredentials().then(data => {
       // this.user = data;
-      this.nm = data[0].name;
+
+      this.nm = data.name;
       this.pwd = "password";
-      this.cmiid = data[0].cmiid;
-      this.profile = data[0].profile;
+      this.cmiid = data.cmiid;
+      this.profile = data.profile;
+
+      // this.nm = data[0].name;
+      // this.pwd = "password";
+      // this.cmiid = data[0].cmiid;
+      // this.profile = data[0].profile;
+
       // console.log(this.TAG + "loadUserData: " + this.user[0].name + " * " + this.user.toString() + " + " + this.user["name"] + " - " + JSON.stringify(this.user));
     });
   }
@@ -137,9 +145,16 @@ export class SettingsPage {
   }
 
   test() {
-    this.apiHandler.getLogging("2018-01-01 00:00:00", "2018-01-31 23:59:59");
+    // this.apiHandler.getLogging("2018-01-01 00:00:00", "2018-01-31 23:59:59");
     // this.apiHandler.test();
     // this.database.credentialsAvailable();
+    // this.database.getLatestData().then(data => {
+    //   console.log("LOG: " + JSON.stringify(data));
+    // })
+    console.log("TEST: " + new Date());
+    console.log("TEST: " + Date.parse("2018-03-06 17:03:55"));
+    console.log("TEST: " + Date.);
+    console.log("TEST: " + Date.now()); // in ms -> /1000 = unixtime
   }
 
 }

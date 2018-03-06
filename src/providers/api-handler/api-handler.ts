@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CMIData } from "../../entities/cmiData";
 import { Http, Headers, RequestOptions } from "@angular/http";
 import { DatabaseProvider } from '../database/database';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class ApiHandlerProvider {

@@ -78,7 +78,11 @@ export class OverviewPage {
           if (x === true) {
             this.dbReady = true;
             this.apiHandler.getAccessToken();
-            // this.database HERE WEITER!
+            if (this.database.hasLoggedData) {
+              // this.apiHandler.getLogging
+            } else {
+              
+            }
           }
           else this.navCtrl.push(SettingsPage);
 
