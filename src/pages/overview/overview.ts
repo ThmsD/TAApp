@@ -79,7 +79,7 @@ export class OverviewPage {
             this.dbReady = true;
             this.apiHandler.getAccessToken();
             if (this.database.hasLoggedData) {
-              // this.apiHandler.getLogging
+              // this.database.getLatestData
             } else {
               
             }

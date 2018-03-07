@@ -27,7 +27,7 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private apiHandler: ApiHandlerProvider, private database: DatabaseProvider) {
     this.database.getDatabaseState().subscribe(rdy => {
-      if(rdy) {
+      if (rdy) {
         console.log(this.TAG + "Database seems to be ready");
         this.loadUserData();
       }
@@ -65,18 +65,18 @@ export class SettingsPage {
     console.log(this.TAG + "saveCredentials() called");
     console.log(this.TAG + "saveCred: " + this.userMod['name'] + this.userMod['password']);
     this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
-    .then(data => {
-      this.loadUserData();
-      this.apiHandler.getAccessToken();
-    });
+      .then(data => {
+        this.loadUserData();
+        this.apiHandler.getAccessToken();
+      });
     // this.usr = {};
     // this.navCtrl.pop();
 
 
     // this.database.addCredentials(this.username.value, this.password.value).then(result => console.log("Ergebnis: " + result));
     // this.database.createDatabase();
-    
-    
+
+
     // headers.append('Access-Control-Allow-Origin' , '*');
     // headers.append('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT');
     // headers.append('Accept','application/json');
@@ -151,10 +151,19 @@ export class SettingsPage {
     // this.database.getLatestData().then(data => {
     //   console.log("LOG: " + JSON.stringify(data));
     // })
-    console.log("TEST: " + new Date());
-    console.log("TEST: " + Date.parse("2018-03-06 17:03:55"));
-    console.log("TEST: " + Date.);
-    console.log("TEST: " + Date.now()); // in ms -> /1000 = unixtime
+
+    // console.log("TEST: " + Date.parse("2018-03-06 17:03:55"));
+    // console.log("TEST2: " + new Date(1520418564*1000));
+    // console.log("TEST3: " + Date.now()); // in ms -> /1000 = unixtime
+    // var date3 = new Date(Date.now());
+    // console.log("Date3: " + date3.getFullYear() + "-" + date3.getMonth()+1 + "-" + date3.getDate() + " " + date3.getHours() + ":" + date3.getMinutes() + ":" + date3.getSeconds());
+
+    this.apiHandler.getLogging("2018-03-01 00:00:00", "2018-03-05 00:00:00").then(() => {
+      this.database.getLatestData().then(x => {
+        console.log("LATEST: " + x);
+      });
+    })
+    
   }
 
 }
