@@ -1,5 +1,6 @@
 export class CMIData {
     name: string;
+    id: string;
     values: value[];
 
     constructor() {

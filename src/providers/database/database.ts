@@ -45,6 +45,8 @@ export class DatabaseProvider {
           .then(() => console.log(this.TAG + "table measurements initialized"))
           .catch(e => console.log(this.TAG + "Error: measurements initialization - " + e));
 
+        this.getLatestLogged();
+
         this.databaseReady.next(true);
       })
     // });
@@ -67,31 +69,32 @@ export class DatabaseProvider {
 
   getCredentials() {
     return this.database.executeSql('SELECT * FROM credentials', []).then((data) => {
-      let user = [];
+      // let user = [];
       // console.log(this.TAG + "GetCreds1: " + JSON.stringify(data));
       // console.log(this.TAG + "GetCreds2: " + JSON.stringify(data.rows));
-      // console.log(this.TAG + "GetCreds3: " + JSON.stringify(data.rows.item(0)));
+      console.log(this.TAG + "GetCreds3: " + JSON.stringify(data.rows.item(0)));
       // console.log(this.TAG + "0getCreds: " + data.rows.item(0).id + "; " + data.rows.item(0).name + "; " + data.rows.item(0).password + "; " + data.rows.length);
       // console.log(this.TAG + "1getCreds: " + data.rows.item(1).id + "; " + data.rows.item(1).name + "; " + data.rows.item(1).password + "; " + data.rows.length);
       // console.log(this.TAG + "2getCreds: " + data.rows.item(2).id + "; " + data.rows.item(2).name + "; " + data.rows.item(2).password + "; " + data.rows.length);
       // if(data.rows.length > 0) {
       //   for(var i = 0; i < data.rows.length; i++) {
-      user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile });
+      // user.push({ name: data.rows.item(0).name, password: data.rows.item(0).password, cmiid: data.rows.item(0).cmiid, profile: data.rows.item(0).profile });
       //   }
       // }
       // console.log(this.TAG + "User: " + user[0] + " - " + user[0].name + " # " + user[0].toString + " ** " + JSON.stringify(user));
       // return user;
       return data.rows.item(0);
     }, err => {
-      console.log(this.TAG + err);
+      console.log(this.TAG + JSON.stringify(err));
       return [];
     })
   }
 
   addAccessToken(token: string) {
     let data = [token, 0];
-    this.database.executeSql('UPDATE credentials SET token=? WHERE id = ?', data).then(() => {
+    return this.database.executeSql('UPDATE credentials SET token=? WHERE id = ?', data).then(() => {
       console.log(this.TAG + "Token added");
+      return true;
     }, err => {
       console.log(this.TAG + "Error: Token not added - " + JSON.stringify(err));
     });
@@ -170,7 +173,7 @@ export class DatabaseProvider {
 
   addDevices(description: any, units: any) {
     for (var device in description) { // device = "a1"; description[device] = "Strom PV"
-      this.database.executeSql('INSERT INTO devices(id, name) VALUES(?, ?)', [device, description[device]]).then(() => {
+      this.database.executeSql('REPLACE INTO devices(id, name) VALUES(?, ?)', [device, description[device]]).then(() => {
       }, err => {
         console.log(this.TAG + "Error: device not added - " + JSON.stringify(err));
       });
@@ -215,22 +218,81 @@ export class DatabaseProvider {
 
   loggedDataAvailable() {
     return this.database.executeSql('SELECT * from measurements', []).then(data => {
-      if (data.rows.length === 1) return true;
+      if (data.rows.length >= 1) return true;
       else return false;
     }, err => {
-      console.log(this.TAG + "Error: can't check for available credentials - " + JSON.stringify(err));
+      console.log(this.TAG + "Error: can't check for available data - " + JSON.stringify(err));
     });
   }
 
-  getLatestData() {
+  /**
+    * Returns the date and time of the latest log in the database.
+    */
+  getLatestLogged() {
     return this.database.executeSql('SELECT * FROM measurements ORDER BY datetime(logged) DESC Limit 1', []).then(data => {
       console.log("LOGGED: " + data.rows.length);
       this.latestLogged = data.rows.item(0).logged;
       console.log(this.TAG + "Latest Logged" + this.latestLogged);
-      this.bHasLoggedData = true;
-      return this.latestLogged;
+      if (data.rows.length === 1) {
+        this.bHasLoggedData = true;
+        return this.latestLogged;
+      } else {
+        var myDate = new Date();
+        return myDate.getFullYear()-1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
+      }
+      
     }, err => {
       console.log(this.TAG + "Error: can't get latest log - " + JSON.stringify(err));
+    });
+  }
+
+  getLatestLoggedString() {
+    return this.latestLogged;
+  }
+
+  /**
+   * Returns the value of the latest log in the database.
+   */
+  getLatestLoggedData() {
+    return this.database.executeSql('SELECT * FROM measurements ORDER BY datetime(logged) DESC Limit 1', []).then(data => {
+      return data.rows.item(0);
+    }, err => {
+      console.log(this.TAG + "Error: can't get latest log data - " + JSON.stringify(err));
+    });
+  }
+
+  /**
+   * Returns all records with the given date.
+   * @param date 
+   */
+  getLoggedDataFromDB(date: string) {
+    return this.database.executeSql('SELECT * FROM measurements WHERE logged = ?', [date]).then(data => {
+      // console.log("LATESTDATA: " + JSON.stringify(data));
+      return data;
+    }, err => {
+      console.log(this.TAG + "Error: can't get logged data from database - " + JSON.stringify(err));
+    })
+  }
+
+  getSumOfDate(device: string, date: string) {
+    return this.database.executeSql('SELECT sum(value) AS summe FROM measurements WHERE device_id = ? AND logged LIKE ?', [device, date + '%']).then(data => {
+      return data.rows.item(0).summe;
+    }, err => {
+      console.log(this.TAG + "Error: can't get sum of device " + device + " on " + date + " - " + JSON.stringify(err));
+    });
+  }
+
+  /**
+   * Returns all devices in database as a map.
+   * Map: key, [name, unit]
+   */
+  getDevicesMap() {
+    return this.database.executeSql("SELECT * FROM devices", []).then(data => {
+      let map = new Map();
+      for (let i = 0; i < data.rows.length; i++) {
+        map.set(data.rows.item(i).id, [data.rows.item(i).name, data.rows.item(i).unit]);
+      }
+      return map;
     })
   }
 
@@ -267,3 +329,6 @@ export class DatabaseProvider {
 // SELECT * FROM test WHERE logged BETWEEN "2018-02-09" AND "2018-02-12"
 // SELECT * FROM test ORDER BY datetime(logged) DESC    // Limit 1
 // INSERT INTO orders VALUES (null, 2, 2);
+// SELECT * FROM measurements WHERE logged LIKE '2018-03-11%'
+// SELECT * FROM measurements WHERE device_id="a1" AND logged LIKE '2018-03-12%'
+// SELECT sum(value) FROM measurements WHERE device_id="a1" AND logged LIKE '2018-03-12%'

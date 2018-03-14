@@ -1,7 +1,10 @@
 <ion-header>
 
   <ion-toolbar>
-    <ion-title>Übersicht</ion-title>
+    <ion-title>
+      Übersicht
+      <p class="subtitle">{{latestLogged}}</p>
+    </ion-title>
     <ion-buttons right>
       <button ion-button icon-only (click)="goToSettings()">
         <ion-icon name="settings"></ion-icon>

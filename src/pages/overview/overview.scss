@@ -48,5 +48,15 @@ page-overview {
     .ctitle {
         padding-bottom: 0px !important;
     }
+
+    .toolbar-title {
+        overflow: visible;
+        position: relative;
+        .subtitle {
+          position: absolute;
+          top: 8px;
+          font-size: 66%;
+        }
+      }
     
 }

@@ -220,7 +220,7 @@ export class DataDetailsPage {
     console.log("navParams: " + this.navParams.get("item"));
     this.item = JSON.parse(JSON.stringify(this.navParams.get("item")));
     //this.item = JSON.parse(temp);
-    console.log("item: " + (JSON.stringify(this.item.name)));
+    console.log("item: " + (JSON.stringify(this.item)));
   }
 
 

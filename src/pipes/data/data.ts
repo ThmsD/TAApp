@@ -35,6 +35,14 @@ export class DataPipe implements PipeTransform {
         return "Stromzaehler";
       case "Verbrauch (sonstige)":
         return "Stromzaehler";
+
+      //temporaer, weil Daten aus dem Logging unschoen benannt sind
+      case "13: Strom PV":
+        return "PV-Solar_color";
+      case "14: Strom Haus":
+        return "Stromzaehler";
+      case "5: Strom EVI":
+        return "EVI_color";
       default:
         break;
     }

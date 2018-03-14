@@ -18,6 +18,7 @@ export class OverviewPage {
 
   private data: any;
   private dbReady: boolean = false;
+  private latestLogged: String;
   // dataSet: Array<CMIData>;
   // kk: CMIData;
   constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider, private apiHandler: ApiHandlerProvider, splashScreen: SplashScreen) {
@@ -32,7 +33,7 @@ export class OverviewPage {
     //   this.data = x;
     //   console.log("Data: " + JSON.stringify(this.data));
     // });
-    
+
     this.loadView();
 
   }
@@ -77,19 +78,20 @@ export class OverviewPage {
         this.database.credentialsAvailable().then(x => {
           if (x === true) {
             this.dbReady = true;
-            this.apiHandler.getAccessToken();
-            if (this.database.hasLoggedData) {
-              // this.database.getLatestData
-            } else {
-              
-            }
+            this.apiHandler.loadData().then(data => {
+              this.data = data;
+              console.log("LOADDATA: " + JSON.stringify(data));
+              this.latestLogged = this.database.getLatestLoggedString();
+            }); // <== ##############
           }
           else this.navCtrl.push(SettingsPage);
 
-          this.apiHandler.load().then(x => {
-            this.data = x;
-            console.log("Data: " + JSON.stringify(this.data));
-          });
+
+          //nachfolgendes kann gelöscht werden, wenn apiHandler.loadData() implementiert ist
+          // this.apiHandler.load().then(x => {
+          //   this.data = x;
+          //   console.log("Data: " + JSON.stringify(this.data));
+          // });
 
         });
 

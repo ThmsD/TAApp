@@ -5,6 +5,8 @@ import { Http, Headers, RequestOptions } from "@angular/http";
 import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 
+import * as moment from "moment";
+
 
 @IonicPage()
 @Component({
@@ -67,7 +69,9 @@ export class SettingsPage {
     this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
       .then(data => {
         this.loadUserData();
-        this.apiHandler.getAccessToken();
+        this.apiHandler.getAccessToken().then(() => {
+          this.apiHandler.loadData();
+        });
       });
     // this.usr = {};
     // this.navCtrl.pop();
@@ -103,7 +107,9 @@ export class SettingsPage {
     //   err => { console.log("POST-Error: " + err) });
   }
 
-  // accessToken() {
+  accessToken() {
+    this.apiHandler.getAccessToken();
+  }
   //   let headers = new Headers();
   //   let username: string;
   //   let pwd: string;
@@ -158,12 +164,33 @@ export class SettingsPage {
     // var date3 = new Date(Date.now());
     // console.log("Date3: " + date3.getFullYear() + "-" + date3.getMonth()+1 + "-" + date3.getDate() + " " + date3.getHours() + ":" + date3.getMinutes() + ":" + date3.getSeconds());
 
-    this.apiHandler.getLogging("2018-03-01 00:00:00", "2018-03-05 00:00:00").then(() => {
-      this.database.getLatestData().then(x => {
-        console.log("LATEST: " + x);
-      });
-    })
-    
+    // this.apiHandler.getLogging("2018-03-01 00:00:00", "2018-03-05 00:00:00").then(() => {
+    //   this.database.getLatestLogged().then(x => {
+    //     console.log("LATEST: " + x);
+    //   });
+    // })
+
+    // let tmp = new Date(Date.parse(this.database.getLatestLoggedString().toString()));
+    // console.log("TMP: " + tmp.getFullYear() + "-" + ('0' + (tmp.getMonth() + 1)).slice(-2) + '-' + ('0' + tmp.getDate()).slice(-2));
+    // let tmp_2 = tmp.getFullYear() + "-" + ('0' + (tmp.getMonth() + 1)).slice(-2) + '-' + ('0' + tmp.getDate()).slice(-2);
+    // this.database.getSumOfDate("a1", tmp_2).then(data => {
+    //   console.log("DATA1: " + JSON.stringify(data.rows.item(0)));
+    //   console.log("DATA2: " + JSON.stringify(data.rows.item(0)));
+    //   // console.log("DATA3: " + JSON.stringify(data.rows.item(0)(1)));
+    //   // console.log("DATA4: " + data.rows.item(0)(1));
+    //   console.log("DATA5: " + data.rows.item(0).summe);
+    // })
+
+    // let myDate = new Date();
+    // let now = myDate.getFullYear()-1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
+    // console.log("DATE: " + now);
+
+    console.log("WEEK1: " + moment().startOf("isoWeek"));
+    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getFullYear());
+    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getMonth());
+    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getDate());
+    // console.log("WEEK3: " + moment((moment().startOf("isoWeek"))/1000));
+
   }
 
 }

@@ -90,26 +90,29 @@ export class ApiHandlerProvider {
   }
 
   getAccessToken() {
+
     let headers = new Headers();
     let username: string;
     let pwd: string;
-    this.database.getCredentials().then(data => {
-      username = data[0].name;
-      pwd = data[0].password;
+    return this.database.getCredentials().then(data => {
+      console.log(this.TAG + "jas " + JSON.stringify(data));
+      console.log(this.TAG + "jasbdn " + data[0]);
+      username = data.name;
+      pwd = data.password;
       console.log(this.TAG + "Name+Pwd: " + username + " " + pwd);
 
       let base64String = btoa(username + ":" + pwd); //btoa("rene_peinl" + ":" + "HShofRPE2017"); 
       console.log(base64String + " = " + atob(base64String));
       headers.append('Authorization', 'Basic ' + base64String);
       let options = new RequestOptions({ headers: headers });
-      this.http.post("https://api.ta.co.at/v1/access_token", {}, options)
+      return this.http.post("https://api.ta.co.at/v1/access_token", {}, options)
         .subscribe(res => {
           // console.log("3: " + res.text());
           let js = JSON.parse(res.text()).data.access_token;
           let cookid = js.cookid;
           let username = js.username;
-          // console.log("js: " + cookid + ":" + username);
-          this.database.addAccessToken(cookid);
+          console.log("js: " + cookid + ":" + username);
+          return this.database.addAccessToken(cookid);
         },
         err => { console.log("POST-Error: " + err) });
     });
@@ -133,6 +136,7 @@ export class ApiHandlerProvider {
   /**
    * GET-Request to obtain all data that is available for the
    * saved profile in the given timeframe.
+   * Calls also methods to save this data to the database.
    * 
    * @param from in the format YYYY-MM-DD hh:mm:ss
    * @param to in the format YYYY-MM-DD hh:mm:ss
@@ -160,8 +164,69 @@ export class ApiHandlerProvider {
       err => { console.log("GET-Error: " + err) });
   }
 
+  loadData() {
+    if (this.database.hasLoggedData) {
+      return this.database.getLatestLogged().then(data => { // datetime des aktuellsten Datenbankeintrag
+        let fromP1 = JSON.stringify(data).substr(1, 17); // = 2018-01-01 12:00:00
+        let fromP2 = JSON.stringify(data).substr(18, 2); // = 00
+        // console.log("P1: " + JSON.stringify(fromP1));
+        // console.log("P2: " + fromP2);
+        if (fromP2 === "00") {
+          fromP2 = "01";
+        } else {
+          let tmp = parseInt(fromP2);
+          fromP2 = JSON.stringify(tmp + 1);
+        }
+        console.log("P2_2: " + fromP2);
+        var myDate = new Date();
+        var now = myDate.getFullYear() + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " +
+          ('0' + (myDate.getHours())).slice(-2) + ":" + ('0' + (myDate.getMinutes())).slice(-2) + ":" + ('0' + (myDate.getSeconds())).slice(-2);
+
+        return this.getLogging(fromP1 + fromP2, now).then(() => { // logging vom aktuellsten DB Eintrag bis heute speichern
+          return this.database.getLatestLoggedData().then(latest => { // aktuellste Eintrag aus der DB bekommen
+            return this.database.getDevicesMap().then(devicesMap => { // Map fuer die Zordnung der Geraete erhalten
+              // console.log("MAP: " + devicesMap.get("a1")[1]); // a1 unit=kW
+              return this.database.getLoggedDataFromDB(latest.logged).then(data => {  // aktuellste Daten aus der DB bekommen (vollstaendig)
+                let overviewData: Array<CMIData>;
+                let cmi = new CMIData();
+                let einheit;
+                overviewData = new Array();
+                let tmp = new Date(Date.parse(this.database.getLatestLoggedString().toString()));
+                let tmp_2 = tmp.getFullYear() + "-" + ('0' + (tmp.getMonth() + 1)).slice(-2) + '-' + ('0' + tmp.getDate()).slice(-2);
+                for (let i = 0; i < data.rows.length; i++) {
+                  this.database.getSumOfDate(data.rows.item(i).device_id, tmp_2).then(sum => {
+                    console.log("SUM!!! - " + sum);
+                    einheit = devicesMap.get(data.rows.item(i).device_id)[1];
+                    cmi.name = devicesMap.get(data.rows.item(i).device_id)[0];
+                    cmi.id = data.rows.item(i).device_id;
+                    cmi.values.push({ description: "Aktuell:&nbsp;", value: data.rows.item(i).value, unit: einheit });
+                    cmi.values.push({ description: "Heute:&nbsp;", value: this.precisionRound(sum, 2), unit: einheit });
+                    console.log("CMI: " + JSON.stringify(cmi));
+                    overviewData.push(cmi);
+                    cmi = new CMIData();
+                    // console.log("DVCID: " + devicesMap.get(data.rows.item(i).device_id)[0]);
+                  });
+                }
+                return overviewData;
+              })
+            });
+            // return latest;
+          });
+        });
+      });
+    };
+  }
+
+
+
+  precisionRound(number, precision) {
+    var factor = Math.pow(10, precision);
+    return Math.round(number * factor) / factor;
+  }
+
+
   test() {
-    
+
   }
 
 }
