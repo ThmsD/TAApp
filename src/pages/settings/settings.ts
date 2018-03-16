@@ -185,12 +185,13 @@ export class SettingsPage {
     // let now = myDate.getFullYear()-1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
     // console.log("DATE: " + now);
 
-    console.log("WEEK1: " + moment().startOf("isoWeek"));
-    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getFullYear());
-    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getMonth());
-    console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getDate());
+    // console.log("WEEK1: " + moment().startOf("isoWeek"));
+    // console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getFullYear());
+    // console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getMonth());
+    // console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getDate());
     // console.log("WEEK3: " + moment((moment().startOf("isoWeek"))/1000));
 
+    console.log("DAAATA: " + JSON.stringify(this.database.getDataOfDay("2018-03-14", "a2")));
   }
 
 }

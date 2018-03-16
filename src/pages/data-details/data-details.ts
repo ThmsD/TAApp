@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides } from 'ionic-angular';
 import { Chart } from "chart.js";
+import { DatabaseProvider } from '../../providers/database/database';
 
 @IonicPage()
 @Component({
@@ -18,6 +19,8 @@ export class DataDetailsPage {
   SwipedTabsIndicator: any = null;
   tabs: any = [];
 
+  private dayData: any = [];
+
   //------------------------------
 
   private item: any;
@@ -25,9 +28,10 @@ export class DataDetailsPage {
   lineChartWeek: any;
   lineChartMonth: any;
   lineChartYear: any;
+  
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public database: DatabaseProvider) {
     this.loadData();
     this.tabs = ["Tag", "Woche", "Monat", "Jahr"];
   }
@@ -35,50 +39,51 @@ export class DataDetailsPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad DataDetailsPage');
 
-    this.lineChartDay = new Chart(this.lineCanvasDay.nativeElement, {
-      type: 'line',
-      data: {
-        labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", 
-                "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", 
-                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", 
-                "19:00", "20:00", "21:00", "22:00", "23:00", "00:00"],
-        datasets: [
-          {
-            label: "kW",
-            fill: true,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [0, 0, 0, 0, 0, 0, 0, 1.2, 1.8, 2.3, 3.5, 5.1, 6.7, 6.5, 5.3, 5, 4.8],
-            spanGaps: false,
-          }
-        ]
-      },
-      options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
-          }]
-        }
-      }
-    });
+    // this.lineChartDay = new Chart(this.lineCanvasDay.nativeElement, {
+    //   type: 'line',
+    //   data: {
+    //     labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", 
+    //             "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", 
+    //             "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", 
+    //             "19:00", "20:00", "21:00", "22:00", "23:00", "00:00"],
+    //     datasets: [
+    //       {
+    //         label: "kW",
+    //         fill: true,
+    //         lineTension: 0.1,
+    //         backgroundColor: "rgba(75,192,192,0.4)",
+    //         borderColor: "rgba(75,192,192,1)",
+    //         borderCapStyle: 'butt',
+    //         borderDash: [],
+    //         borderDashOffset: 0.0,
+    //         borderJoinStyle: 'miter',
+    //         pointBorderColor: "rgba(75,192,192,1)",
+    //         pointBackgroundColor: "#fff",
+    //         pointBorderWidth: 1,
+    //         pointHoverRadius: 5,
+    //         pointHoverBackgroundColor: "rgba(75,192,192,1)",
+    //         pointHoverBorderColor: "rgba(220,220,220,1)",
+    //         pointHoverBorderWidth: 2,
+    //         pointRadius: 1,
+    //         pointHitRadius: 10,
+    //         // data: [0, 0, 0, 0, 0, 0, 0, 1.2, 1.8, 2.3, 3.5, 5.1, 6.7, 6.5, 5.3, 5, 4.8],
+    //         data: this.dayData,
+    //         spanGaps: false,
+    //       }
+    //     ]
+    //   },
+    //   options: {
+    //     maintainAspectRatio: false,
+    //     responsive: true,
+    //     scales: {
+    //       yAxes: [{
+    //         ticks: {
+    //           beginAtZero: true
+    //         }
+    //       }]
+    //     }
+    //   }
+    // });
 
     this.lineChartWeek = new Chart(this.lineCanvasWeek.nativeElement, {
       type: 'bar',
@@ -216,13 +221,73 @@ export class DataDetailsPage {
   }
   
 
-  loadData() {
+  async loadData() {
     console.log("navParams: " + this.navParams.get("item"));
     this.item = JSON.parse(JSON.stringify(this.navParams.get("item")));
     //this.item = JSON.parse(temp);
     console.log("item: " + (JSON.stringify(this.item)));
+    await this.database.getDataOfDay("2018-03-16", this.item.id).then(data => {
+      console.log("FUNK?: " + JSON.stringify(data))
+      this.dayData = data;
+
+      this.lineChartDay = new Chart(this.lineCanvasDay.nativeElement, {
+        type: 'line',
+        data: {
+          labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", 
+                  "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", 
+                  "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", 
+                  "19:00", "20:00", "21:00", "22:00", "23:00", "00:00"],
+          datasets: [
+            {
+              label: "kW",
+              fill: true,
+              lineTension: 0.1,
+              backgroundColor: "rgba(75,192,192,0.4)",
+              borderColor: "rgba(75,192,192,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              // data: [0, 0, 0, 0, 0, 0, 0, 1.2, 1.8, 2.3, 3.5, 5.1, 6.7, 6.5, 5.3, 5, 4.8],
+              data: this.dayData,
+              spanGaps: false,
+            }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+
+
+    });
   }
 
+  getDataOfDay(day: string) {
+    
+  }
+
+  setDayData(data: any) {
+    // this.dayData = data;
+  }
 
 
   //------------------------------

@@ -195,12 +195,11 @@ export class ApiHandlerProvider {
                 let tmp_2 = tmp.getFullYear() + "-" + ('0' + (tmp.getMonth() + 1)).slice(-2) + '-' + ('0' + tmp.getDate()).slice(-2);
                 for (let i = 0; i < data.rows.length; i++) {
                   this.database.getSumOfDate(data.rows.item(i).device_id, tmp_2).then(sum => {
-                    console.log("SUM!!! - " + sum);
                     einheit = devicesMap.get(data.rows.item(i).device_id)[1];
                     cmi.name = devicesMap.get(data.rows.item(i).device_id)[0];
                     cmi.id = data.rows.item(i).device_id;
                     cmi.values.push({ description: "Aktuell:&nbsp;", value: data.rows.item(i).value, unit: einheit });
-                    cmi.values.push({ description: "Heute:&nbsp;", value: this.precisionRound(sum, 2), unit: einheit });
+                    cmi.values.push({ description: "Heute:&nbsp;", value: this.precisionRound(sum, 2), unit: einheit + "h" });
                     console.log("CMI: " + JSON.stringify(cmi));
                     overviewData.push(cmi);
                     cmi = new CMIData();

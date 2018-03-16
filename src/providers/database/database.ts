@@ -15,6 +15,10 @@ export class DatabaseProvider {
   private latestLogged: String;
   private bHasLoggedData: Boolean;
 
+  private logsPerHours: number = 12;
+  private hours = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
+    , "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
+
 
   constructor(private sqlite: SQLite, private platform: Platform) {
     // console.log('Hello DatabaseProvider');
@@ -180,7 +184,6 @@ export class DatabaseProvider {
 
     }
     for (var device in units) { // device = "a1"; units[device].unity = "kW"
-      console.log("ERR? " + units[device].unity + "  " + device);
       this.database.executeSql('UPDATE devices SET unit = ? WHERE id = ?', [units[device].unity, device]).then(() => {
       }, err => {
         console.log(this.TAG + "Error: unit not added to device - " + JSON.stringify(err));
@@ -238,9 +241,9 @@ export class DatabaseProvider {
         return this.latestLogged;
       } else {
         var myDate = new Date();
-        return myDate.getFullYear()-1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
+        return myDate.getFullYear() - 1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
       }
-      
+
     }, err => {
       console.log(this.TAG + "Error: can't get latest log - " + JSON.stringify(err));
     });
@@ -276,7 +279,7 @@ export class DatabaseProvider {
 
   getSumOfDate(device: string, date: string) {
     return this.database.executeSql('SELECT sum(value) AS summe FROM measurements WHERE device_id = ? AND logged LIKE ?', [device, date + '%']).then(data => {
-      return data.rows.item(0).summe;
+      return (data.rows.item(0).summe / this.logsPerHours);
     }, err => {
       console.log(this.TAG + "Error: can't get sum of device " + device + " on " + date + " - " + JSON.stringify(err));
     });
@@ -298,6 +301,31 @@ export class DatabaseProvider {
 
   hasLoggedData() {
     return this.bHasLoggedData;
+  }
+
+  /**
+   * 
+   * @param day in the format YYYY-MM-DD
+   * @param device 
+   */
+  async getDataOfDay(day: string, device: string) {
+    let hourData: Array<any> = [];
+    let start: string;
+    let end: string;
+    for (let hour of this.hours) {
+      start = day + " " + hour + ":00:00";
+      end = day + " " + hour + ":59:59";
+      await this.database.executeSql("SELECT sum(value) as summe FROM measurements WHERE device_id = ? AND logged BETWEEN ? AND ?", [device, start, end]).then(data => {
+        // console.log("SUM: " + data.rows.item(0).summe);
+        hourData.push(data.rows.item(0).summe);
+        // console.log("KA: " + hourData);
+        // set details data;
+      })
+    }
+    console.log("ARRAY: " + hourData);
+    // this.details.setDayData(hourData);
+    return hourData;
+    // this.database.executeSql('SELECT sum(value) AS summe FROM measurements WHERE device_id = ? ')
   }
 
   // public createDatabase() {
