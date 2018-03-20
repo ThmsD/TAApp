@@ -25,7 +25,7 @@ export class OverviewPage {
     // this.kk = new CMIData();
     // this.dataSet = new Array();
 
-    // this.apiHandler.loadOverviewData().then(x => {
+    // this.apiHandler.loadDataFull().then(x => {
     //   this.data = x;
     // });
 

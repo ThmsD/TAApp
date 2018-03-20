@@ -63,16 +63,16 @@ export class SettingsPage {
     //  console.log('ionViewDidLoad SettingsPage');
   }
 
-  saveCredentials() {
+  async saveCredentials() {
     console.log(this.TAG + "saveCredentials() called");
-    console.log(this.TAG + "saveCred: " + this.userMod['name'] + this.userMod['password']);
-    this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
-      .then(data => {
+    console.log(this.TAG + "saveCred: " + this.userMod['name'] + " " + this.userMod['password']);
+    await this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
+      .then(() => {
         this.loadUserData();
-        this.apiHandler.getAccessToken().then(() => {
-          this.apiHandler.loadData();
-        });
       });
+    await this.apiHandler.getAccessToken().then(() => {
+      this.apiHandler.loadData();
+    });
     // this.usr = {};
     // this.navCtrl.pop();
 
@@ -191,7 +191,18 @@ export class SettingsPage {
     // console.log("WEEK2: " + moment().endOf("isoWeek").toDate().getDate());
     // console.log("WEEK3: " + moment((moment().startOf("isoWeek"))/1000));
 
-    console.log("DAAATA: " + JSON.stringify(this.database.getDataOfDay("2018-03-14", "a2")));
+    // console.log("DAAATA: " + JSON.stringify(this.database.getDataOfDay("2018-03-14", "a2")));
+
+    // console.log("MOMENT: " + moment().week());
+
+    // console.log("WEEK1: " + moment("2018-03-15").startOf("isoWeek").format("YYYY-MM-DD"));
+
+    // this.database.getDataOfWeek("2018-03-15", "a2");
+    // this.database.getDataOfMonth("2018-03-15", "a2");
+
+    // this.database.getDataOfYear("2018-03-15", "a2");
+    let day = moment().startOf("year").subtract(1, "year").format("YYYY-MM-DD HH:mm:ss");
+    console.log(moment(day).add(1, "second").format("YYYY-MM-DD HH:mm:ss"));
   }
 
 }

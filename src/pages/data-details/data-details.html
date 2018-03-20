@@ -38,7 +38,7 @@
 			 (ionSlideDidChange)="updateIndicatorPosition()" (pan)="updateIndicatorPosition()" [pager]="false">
 				<ion-slide>
           <div style="font-size: 0.8em; margin-top: 0.4em">
-            < 19.01.2018 >
+            {{day}}
           </div>
           <div style="height: 58vh;">
             <canvas #lineCanvasDay></canvas>
@@ -46,7 +46,7 @@
 				</ion-slide>
 				<ion-slide>
           <div style="font-size: 0.8em; margin-top: 0.4em">
-            < KW 3 >
+            {{week}}
           </div>
           <div style="height: 58vh;">
             <canvas #lineCanvasWeek></canvas>
@@ -54,7 +54,7 @@
 				</ion-slide>
 				<ion-slide>
           <div style="font-size: 0.8em; margin-top: 0.4em">
-            < Januar >
+            März
           </div>
           <div style="height: 58vh;">
             <canvas #lineCanvasMonth></canvas>
@@ -62,7 +62,7 @@
 				</ion-slide>
 				<ion-slide>
           <div style="font-size: 0.8em; margin-top: 0.4em">
-            < 2018 >
+            2018
           </div>
           <div style="height: 58vh;">
             <canvas #lineCanvasYear></canvas>

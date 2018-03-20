@@ -3,6 +3,7 @@ import { CMIData } from "../../entities/cmiData";
 import { Http, Headers, RequestOptions } from "@angular/http";
 import { DatabaseProvider } from '../database/database';
 import { Observable } from 'rxjs/Observable';
+import * as moment from "moment";
 
 @Injectable()
 export class ApiHandlerProvider {
@@ -19,7 +20,7 @@ export class ApiHandlerProvider {
     this.dataSet = new Array();
   }
 
-  /*
+  // ********************************************
   loadOverviewData() {
 
     return this.http.get("assets/testdata_full.json").toPromise().then(
@@ -35,7 +36,7 @@ export class ApiHandlerProvider {
     // return "wtf";
   }
 
-  loadData() {
+  loadDataFull() {
     return this.loadOverviewData().then(x => {
       console.log("x: " + JSON.stringify(x));
       let desc;
@@ -49,21 +50,23 @@ export class ApiHandlerProvider {
           desc = v.description;
           pos = v.value.indexOf(" ")
           val = v.value.substring(0, pos);
-          console.log(v.value.length + " - " + pos);
+          // console.log(v.value.length + " - " + pos);
           un = v.value.substring(pos + 1, v.value.length);
 
           this.cmiData.values.push({ description: desc, value: val, unit: un });
-          this.dataSet.push(this.cmiData);
-          // this.cmiData = new CMIData();
+          
         }
+        this.dataSet.push(this.cmiData);
+        this.cmiData = new CMIData();
+      }
 
         // console.log("DataSet: " + JSON.stringify(this.dataSet));
         return this.dataSet;
 
-      }
+      // }
     });
   }
-  */
+// ****************************************
 
   load() {
     return this.http.get("assets/testdata_full.json").toPromise().then(
@@ -165,8 +168,10 @@ export class ApiHandlerProvider {
   }
 
   loadData() {
-    if (this.database.hasLoggedData) {
+    // if (this.database.hasLoggedData) {
       return this.database.getLatestLogged().then(data => { // datetime des aktuellsten Datenbankeintrag
+        
+        /*
         let fromP1 = JSON.stringify(data).substr(1, 17); // = 2018-01-01 12:00:00
         let fromP2 = JSON.stringify(data).substr(18, 2); // = 00
         // console.log("P1: " + JSON.stringify(fromP1));
@@ -181,8 +186,14 @@ export class ApiHandlerProvider {
         var myDate = new Date();
         var now = myDate.getFullYear() + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " +
           ('0' + (myDate.getHours())).slice(-2) + ":" + ('0' + (myDate.getMinutes())).slice(-2) + ":" + ('0' + (myDate.getSeconds())).slice(-2);
+        */
 
-        return this.getLogging(fromP1 + fromP2, now).then(() => { // logging vom aktuellsten DB Eintrag bis heute speichern
+        let from = moment(data).add(1, "second").format("YYYY-MM-DD HH:mm:ss");
+        let to = moment().format("YYYY-MM-DD HH:mm:ss");
+
+
+        // return this.getLogging(fromP1 + fromP2, now).then(() => { // logging vom aktuellsten DB Eintrag bis heute speichern
+        return this.getLogging(from, to).then(() => {
           return this.database.getLatestLoggedData().then(latest => { // aktuellste Eintrag aus der DB bekommen
             return this.database.getDevicesMap().then(devicesMap => { // Map fuer die Zordnung der Geraete erhalten
               // console.log("MAP: " + devicesMap.get("a1")[1]); // a1 unit=kW
@@ -200,12 +211,16 @@ export class ApiHandlerProvider {
                     cmi.id = data.rows.item(i).device_id;
                     cmi.values.push({ description: "Aktuell:&nbsp;", value: data.rows.item(i).value, unit: einheit });
                     cmi.values.push({ description: "Heute:&nbsp;", value: this.precisionRound(sum, 2), unit: einheit + "h" });
-                    console.log("CMI: " + JSON.stringify(cmi));
+                    // console.log("CMI: " + JSON.stringify(cmi));
                     overviewData.push(cmi);
                     cmi = new CMIData();
                     // console.log("DVCID: " + devicesMap.get(data.rows.item(i).device_id)[0]);
                   });
                 }
+
+                // ENERGIEMONITOR berechnen
+
+
                 return overviewData;
               })
             });
@@ -213,7 +228,7 @@ export class ApiHandlerProvider {
           });
         });
       });
-    };
+    // };
   }
 
 
