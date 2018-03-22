@@ -14,6 +14,7 @@ export class ApiHandlerProvider {
   private cmiData: CMIData;
   dataSet: Array<CMIData>;
   private TAG: String = "APIHandler - ";
+  private cookid: string;
 
   constructor(public http: Http, public database: DatabaseProvider) {
     this.cmiData = new CMIData();
@@ -99,7 +100,7 @@ export class ApiHandlerProvider {
     let pwd: string;
     return this.database.getCredentials().then(data => {
       console.log(this.TAG + "jas " + JSON.stringify(data));
-      console.log(this.TAG + "jasbdn " + data[0]);
+      console.log(this.TAG + "token " + data.token);
       username = data.name;
       pwd = data.password;
       console.log(this.TAG + "Name+Pwd: " + username + " " + pwd);
@@ -129,9 +130,9 @@ export class ApiHandlerProvider {
         console.log("2: " + JSON.stringify(res.json()));
         console.log("3: " + res.text());
         let js = JSON.parse(res.text()).data.access_token;
-        let cookid = js.cookid;
+        this.cookid = js.cookid;
         let username = js.username;
-        console.log("js: " + cookid + ":" + username);
+        console.log("js: " + this.cookid + ":" + username);
       },
       err => { console.log("GET-Error: " + err) });
   }
@@ -149,20 +150,21 @@ export class ApiHandlerProvider {
     let profile = await this.database.getProfile();
     console.log(this.TAG + "CMIID: " + cmiid);
     console.log(this.TAG + "PROFILE: " + profile);
-    this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=" + from + "&to=" + to, {}) //2018-02-14 00:00:00&to=2018-02-14 12:00:00", {})
+    await this.http.get(this.basicURL + cmiid + "/profile/" + profile + "/all?from=" + from + "&to=" + to, {}) //2018-02-14 00:00:00&to=2018-02-14 12:00:00", {})
       .subscribe(res => {
         let description = JSON.parse(res.text()).data.description;
         let units = JSON.parse(res.text()).data.units;
         let values = JSON.parse(res.text()).data.val;
 
-        // console.log("UNITS: " + JSON.stringify(units));
-        // console.log("DESC: " + JSON.stringify(description));
-        // console.log("VAL: " + JSON.stringify(values));
+        console.log("UNITS: " + JSON.stringify(units));
+        console.log("DESC: " + JSON.stringify(description));
+        console.log("VAL: " + JSON.stringify(values));
 
         // this.database.addDescriptions(description);
         // this.database.addUnits(units);
         this.database.addDevices(description, units);
-        this.database.addValues(values);
+        // this.database.addValues(values);
+        this.database.addValuesNew(values);
       },
       err => { console.log("GET-Error: " + err) });
   }

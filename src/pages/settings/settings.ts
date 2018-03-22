@@ -63,16 +63,17 @@ export class SettingsPage {
     //  console.log('ionViewDidLoad SettingsPage');
   }
 
-  async saveCredentials() {
+  saveCredentials() {
     console.log(this.TAG + "saveCredentials() called");
     console.log(this.TAG + "saveCred: " + this.userMod['name'] + " " + this.userMod['password']);
-    await this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
+    this.database.addCredentials(this.userMod['name'], this.userMod['password'], this.userMod['cmiid'], this.userMod['profile'])
       .then(() => {
         this.loadUserData();
+      }).then(() => {
+        this.apiHandler.getAccessToken().then(() => {
+          this.apiHandler.loadData();
+        });
       });
-    await this.apiHandler.getAccessToken().then(() => {
-      this.apiHandler.loadData();
-    });
     // this.usr = {};
     // this.navCtrl.pop();
 
@@ -138,8 +139,11 @@ export class SettingsPage {
   //   });
   // }
 
-  getAddress() {
-    this.apiHandler.getAddress();
+  getLatestLog() {
+    this.database.getLatestLoggedData().then(data => {
+      console.log("setting-LATESTLOG: " + JSON.stringify(data));
+      
+    });
   }
 
   addToken() {
@@ -201,8 +205,19 @@ export class SettingsPage {
     // this.database.getDataOfMonth("2018-03-15", "a2");
 
     // this.database.getDataOfYear("2018-03-15", "a2");
-    let day = moment().startOf("year").subtract(1, "year").format("YYYY-MM-DD HH:mm:ss");
-    console.log(moment(day).add(1, "second").format("YYYY-MM-DD HH:mm:ss"));
+    // let day = moment().startOf("year").subtract(1, "year").format("YYYY-MM-DD HH:mm:ss");
+    // console.log(moment(day).add(1, "second").format("YYYY-MM-DD HH:mm:ss"));
+
+    // this.apiHandler.loadData().then(() => {
+    //   this.database.getLatestLogged().then(data => {
+    //     console.log(JSON.stringify("LATEST: " + data));
+    //   });
+    // });
+
+    // this.apiHandler.getLogging("2018-03-22 00:00:00", "2018-03-22 10:00:00");
+
+    console.log(moment().startOf("week").format("YYYY-MM-DD HH:mm:ss"));
   }
+
 
 }

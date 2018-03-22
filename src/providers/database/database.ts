@@ -153,6 +153,47 @@ export class DatabaseProvider {
 
   addValues(values: any) {
     let dateTime: string;
+    let queryBatch: Array<string> = [];
+    let query: string;
+    // this.database.transaction((tx) => {
+    for (var i = 0; Object.keys(values).length; i++) { //i < 2 ; i++) {
+      dateTime = values[i]["zeit"];
+      for (var e in values[i]) {
+        if (e !== "zeit") {
+          query = "INSERT INTO measurements(logged, value, device_id) VALUES('" + dateTime + "', " + values[i][e] + ", '" + e + "')";
+          // console.log("##### " + query);
+          queryBatch.push(query);
+          // tx.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e], (tx, resultSet) => {
+          //   console.log(this.TAG + 'data added! #######');
+          // }, (err) => {
+          //   console.log(this.TAG + 'Create Table Error! ####### - ' + JSON.stringify(err)); 
+          // }).then(result => {
+          //   console.log("#####" + JSON.stringify(result));
+          // });
+
+
+          // tx.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e]).then(() => {
+          // }, err => {
+          //   console.log(this.TAG + "Error: Measurements not added - " + JSON.stringify(err));
+          // });
+
+
+          //values[i][e] = value (e.g. 0.07); 
+          // e = key (e.g. a1);
+          // console.log("E: " + values[i][e] + "  -  " + e); 
+        }
+        console.log(this.TAG + "JETZT1");
+      }
+      console.log(this.TAG + "JETZT2");
+    }
+    console.log(this.TAG + "JETZT3");
+    this.database.sqlBatch(queryBatch).then(result => {
+      console.log("#### " + JSON.stringify(result));
+    }, err => {
+      console.log(this.TAG + "Error: Adding values failed - " + JSON.stringify(err));
+    });
+
+    /* WORKING
     for (var i = 0; i < Object.keys(values).length; i++) {
       dateTime = values[i]["zeit"];
       for (var e in values[i]) {
@@ -167,6 +208,8 @@ export class DatabaseProvider {
         }
       }
     }
+  WORKING */
+
     console.log(this.TAG + "adding values finished");
     // this.database.executeSql('SELECT * FROM measurements', []).then((data) => {
     //   console.log(this.TAG + "MEASUREMENT: " + JSON.stringify(data.rows.item(0)));
@@ -177,8 +220,58 @@ export class DatabaseProvider {
 
   }
 
+
+  async addValuesNew(values: any) {
+    let dateTime: string;
+    console.log("LENGTH: " + Object.keys(values).length);
+    for (var i = 0; i < Object.keys(values).length; i++) { //i < 2 ; i++) {
+      dateTime = values[i]["zeit"];
+      console.log("I: " + i);
+      for (var e in values[i]) {
+        if (e !== "zeit") {
+          await this.database.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e]).then(result => {
+            // console.log(this.TAG + 'data added! #######' + i);
+          }, err => {
+            console.log(this.TAG + 'Create Table Error! ####### - ' + JSON.stringify(err)); 
+          // }).then(result => {
+          //   console.log("#####" + JSON.stringify(result));
+          });
+
+
+          // tx.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e]).then(() => {
+          // }, err => {
+          //   console.log(this.TAG + "Error: Measurements not added - " + JSON.stringify(err));
+          // });
+
+        }
+      }
+    }
+
+    /* WORKING
+    for (var i = 0; i < Object.keys(values).length; i++) {
+      dateTime = values[i]["zeit"];
+      for (var e in values[i]) {
+        if (e !== "zeit") {
+          this.database.executeSql('INSERT INTO measurements(logged, value, device_id) VALUES(?, ?, ?)', [dateTime, values[i][e], e]).then(() => {
+          }, err => {
+            console.log(this.TAG + "Error: Measurements not added - " + JSON.stringify(err));
+          });
+          //values[i][e] = value (e.g. 0.07); 
+          // e = key (e.g. a1);
+          // console.log("E: " + values[i][e] + "  -  " + e); 
+        }
+      }
+    }
+  WORKING */
+
+    console.log(this.TAG + "adding values finished");
+  }
+
+
+
   async addDevices(description: any, units: any) {
     for (var device in description) { // device = "a1"; description[device] = "Strom PV"
+      console.log(this.TAG + JSON.stringify(device));
       await this.database.executeSql('REPLACE INTO devices(id, name) VALUES(?, ?)', [device, description[device]]).then(() => {
       }, err => {
         console.log(this.TAG + "Error: device not added - " + JSON.stringify(err));
@@ -259,7 +352,10 @@ export class DatabaseProvider {
         // var myDate = new Date();
         // return myDate.getFullYear() - 1 + '-' + ('0' + (myDate.getMonth() + 1)).slice(-2) + '-' + ('0' + myDate.getDate()).slice(-2) + " " + "00:00:00";
         // return moment().startOf("year").subtract(1, "year").format("YYYY-MM-DD HH:mm:ss");
-        return moment().startOf("month").format("YYYY-MM-DD HH:mm:ss");
+
+        // return moment().startOf("month").format("YYYY-MM-DD HH:mm:ss");
+        // return moment().subtract(1, "days").format("YYYY-MM-DD HH:mm:ss");
+        return moment().startOf("isoWeek").format("YYYY-MM-DD HH:mm:ss");
       }
 
     }, err => {
@@ -398,6 +494,10 @@ export class DatabaseProvider {
 
     await this.database.executeSql("SELECT * FROM measurements WHERE device_id = ? AND logged BETWEEN ? AND ? ORDER BY logged ASC", [device, startDayMonth, endDayMonth + " 23:59:59"]).then(data => {
       let date = startDayMonth;
+      let dayDifference = moment(moment(data.rows.item(0).logged).format("YYYY-MM-DD")).diff(date, "days");
+      for (var z = 1; z < dayDifference; z++) {
+        monthData.push(0);
+      }
       for (var i = 0; i < data.rows.length; i++) {
         if (moment(moment(data.rows.item(i).logged).format("YYYY-MM-DD")).isSame(date)) {
           dayValue = dayValue + data.rows.item(i).value;
