@@ -252,7 +252,7 @@ export class DataDetailsPage {
             pointHoverBorderWidth: 2,
             pointRadius: 1,
             pointHitRadius: 10,
-            data: [463, 0],
+            // data: [463, 0],
             spanGaps: false,
           }
         ]
@@ -294,7 +294,11 @@ export class DataDetailsPage {
     await this.database.getDataOfMonth(this.day, this.item.id).then(data => {
       this.lineChartMonth.data.datasets[0].data = data;
       this.lineChartMonth.update();
-    })
+    });
+    await this.database.getDataOfYear(this.day, this.item.id).then(data => {
+      this.lineChartYear.data.datasets[0].data = data;
+      this.lineChartYear.update();
+    });
   }
 
   getDataOfDay(day: string) {

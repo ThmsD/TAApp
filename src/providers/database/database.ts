@@ -524,7 +524,10 @@ export class DatabaseProvider {
 
     await this.database.executeSql("SELECT * FROM measurements WHERE device_id = ? AND logged BETWEEN ? AND ? ORDER BY logged ASC", [device, startDayYear, endDayYear + " 23:59:59"]).then(data => {
       let month = moment(startDayYear).format("YYYY-MM");
-      console.log(month);
+      let monthDifference = moment(moment(data.rows.item(0).logged).format("YYYY-MM-DD")).diff(month, "months");
+      for (var z = 1; z < monthDifference; z++) {
+        yearData.push(0);
+      }
       for (var i = 0; i < data.rows.length; i++) {
         if (moment(moment(data.rows.item(i).logged).format("YYYY-MM")).isSame(month)) {
           monthValue = monthValue + data.rows.item(i).value;
@@ -532,12 +535,12 @@ export class DatabaseProvider {
           yearData.push(this.precisionRound(monthValue / this.logsPerHours, 2));
           monthValue = data.rows.item(i).value;
           month = moment(data.rows.item(i).logged).format("YYYY-MM");
-          console.log(month);
         }
       }
       yearData.push(this.precisionRound(monthValue / this.logsPerHours, 2));
     });
     console.log("YEAR: " + yearData);
+    return yearData;
   }
 
   precisionRound(number, precision) {
