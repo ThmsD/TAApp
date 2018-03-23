@@ -6,6 +6,7 @@ import { ApiHandlerProvider } from '../../providers/api-handler/api-handler';
 import { DateTime } from 'ionic-angular/components/datetime/datetime';
 
 import * as moment from "moment";
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 
 
 @IonicPage()
@@ -27,7 +28,8 @@ export class SettingsPage {
   // @ViewChild('username') username;
   // @ViewChild('password') password;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private apiHandler: ApiHandlerProvider, private database: DatabaseProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http,
+    private apiHandler: ApiHandlerProvider, private database: DatabaseProvider, private toastCtrl: ToastController) {
     this.database.getDatabaseState().subscribe(rdy => {
       if (rdy) {
         console.log(this.TAG + "Database seems to be ready");
@@ -142,7 +144,7 @@ export class SettingsPage {
   getLatestLog() {
     this.database.getLatestLoggedData().then(data => {
       console.log("setting-LATESTLOG: " + JSON.stringify(data));
-      
+
     });
   }
 
@@ -216,7 +218,18 @@ export class SettingsPage {
 
     // this.apiHandler.getLogging("2018-03-22 00:00:00", "2018-03-22 10:00:00");
 
-    console.log(moment().startOf("week").format("YYYY-MM-DD HH:mm:ss"));
+    let toast = this.toastCtrl.create({
+      message: "Test 1234",
+      // duration: 5000,
+      position: "top",
+      showCloseButton: true
+    });
+    toast.onDidDismiss(() => {
+      console.log("DISMISSED!");
+      console.log(moment().format("mm:ss"));
+    });
+    toast.present();
+    console.log(moment().format("mm:ss"));
   }
 
 

@@ -19,6 +19,7 @@ export class OverviewPage {
   private data: any;
   private dbReady: boolean = false;
   private latestLogged: String;
+  private hasData: boolean = false;
   // dataSet: Array<CMIData>;
   // kk: CMIData;
   constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private database: DatabaseProvider, private apiHandler: ApiHandlerProvider, splashScreen: SplashScreen) {
@@ -82,6 +83,9 @@ export class OverviewPage {
               this.data = data;
               console.log("LOADDATA: " + JSON.stringify(data));
               this.latestLogged = this.database.getLatestLoggedString();
+              if (this.latestLogged != "") {
+                this.hasData = true;
+              }
             }); // <== ##############
           }
           else this.navCtrl.push(SettingsPage);
@@ -94,9 +98,6 @@ export class OverviewPage {
           // });
 
         });
-
-
-
       }
     });
   }
@@ -115,6 +116,10 @@ export class OverviewPage {
 
   test(b: boolean): boolean {
     return b;
+  }
+
+  hasItData() {
+    return !this.hasData;
   }
 
 }

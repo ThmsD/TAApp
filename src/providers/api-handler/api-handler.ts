@@ -4,6 +4,7 @@ import { Http, Headers, RequestOptions } from "@angular/http";
 import { DatabaseProvider } from '../database/database';
 import { Observable } from 'rxjs/Observable';
 import * as moment from "moment";
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 
 @Injectable()
 export class ApiHandlerProvider {
@@ -16,7 +17,7 @@ export class ApiHandlerProvider {
   private TAG: String = "APIHandler - ";
   private cookid: string;
 
-  constructor(public http: Http, public database: DatabaseProvider) {
+  constructor(public http: Http, public database: DatabaseProvider, private toastCtrl: ToastController) {
     this.cmiData = new CMIData();
     this.dataSet = new Array();
   }
@@ -111,14 +112,29 @@ export class ApiHandlerProvider {
       let options = new RequestOptions({ headers: headers });
       return this.http.post("https://api.ta.co.at/v1/access_token", {}, options)
         .subscribe(res => {
-          // console.log("3: " + res.text());
+          
+          this.toastCtrl.create({
+            message: "Daten erfolgreich gespeichert",
+            duration: 5000,
+            position: "middle"
+          }).present();
+
+          console.log("STATUS: " + res.status);
           let js = JSON.parse(res.text()).data.access_token;
           let cookid = js.cookid;
           let username = js.username;
           console.log("js: " + cookid + ":" + username);
           return this.database.addAccessToken(cookid);
         },
-        err => { console.log("POST-Error: " + err) });
+        err => { 
+          console.log("POST-Error: " + err);
+          this.toastCtrl.create({
+            message: "Überprüfe deine eingegebenen Daten",
+            position: "bottom",
+            showCloseButton: true,
+            closeButtonText: "OK"
+          }).present();
+        });
     });
   }
 

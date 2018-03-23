@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs/Rx";
 import { Platform } from 'ionic-angular/platform/platform';
 import * as moment from "moment";
 import { take } from 'rxjs/operators/take';
+import { ToastController } from 'ionic-angular/components/toast/toast-controller';
 
 
 @Injectable()
@@ -22,7 +23,7 @@ export class DatabaseProvider {
     , "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
 
 
-  constructor(private sqlite: SQLite, private platform: Platform) {
+  constructor(private sqlite: SQLite, private platform: Platform, private toastCtrl: ToastController) {
     // console.log('Hello DatabaseProvider');
     this.bHasLoggedData = false;
     this.initialize();
@@ -107,6 +108,7 @@ export class DatabaseProvider {
   }
 
   getAccessToken() {
+    console.log(moment().format("mm:ss"));
     this.database.executeSql('SELECT * FROM credentials', []).then((data) => {
       console.log(this.TAG + JSON.stringify(data.rows.item(0)));
     }, err => {
@@ -222,6 +224,11 @@ export class DatabaseProvider {
 
 
   async addValuesNew(values: any) {
+    let toast = this.toastCtrl.create({
+      message: "Daten werden aus dem Webportal abgerufen...",
+      position: "bttom"
+    });
+    toast.present();
     let dateTime: string;
     console.log("LENGTH: " + Object.keys(values).length);
     for (var i = 0; i < Object.keys(values).length; i++) { //i < 2 ; i++) {
@@ -265,6 +272,7 @@ export class DatabaseProvider {
   WORKING */
 
     console.log(this.TAG + "adding values finished");
+    toast.dismiss();
   }
 
 
@@ -319,7 +327,7 @@ export class DatabaseProvider {
     });
   }
 
-  credentialsAvailable() {
+  credentialsAvailable() {   
     return this.database.executeSql('SELECT * from credentials', []).then((data) => {
       if (data.rows.length === 1) return true;
       else return false;

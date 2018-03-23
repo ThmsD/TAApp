@@ -132,6 +132,7 @@
     </ion-grid> -->
 
   <!-- ####################################### -->
+  <div *ngIf="hasItData()">Daten werden noch aus dem Webportal geladen.<br><br>Sobald die Daten abgerufen wurden, werden sie nach dem nächsten Appstart hier angezeigt.</div>
   <ion-grid>
     <ion-row>
       <ion-col col-6 col-md-4 col-xl-3 *ngFor="let item of data">
