@@ -122,4 +122,9 @@ export class OverviewPage {
     return !this.hasData;
   }
 
+  doRefresh(refresher) {
+      this.navCtrl.setRoot(this.navCtrl.getActive().component);
+      refresher.complete();
+  }
+
 }
